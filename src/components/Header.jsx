@@ -14,7 +14,7 @@ const Header = () => {
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-1 px-3 py-2 rounded-lg transition ${
       isActive
-        ? "text-orange-600 font-semibold" // cuma teksnya berubah
+        ? "text-orange-600 font-semibold" 
         : "text-gray-700 hover:text-orange-500"
     }`;
 
