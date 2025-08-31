@@ -42,7 +42,7 @@ function MyRecipes() {
               title: judul,
               category: kategori,
               cookTime: waktu,
-              description: deskripsi, // 🆕
+              description: deskripsi, 
               ingredients: bahan,
               steps: langkah,
               image: gambar,
@@ -108,7 +108,7 @@ function MyRecipes() {
     setJudul(resep.title);
     setKategori(resep.category);
     setWaktu(resep.cookTime);
-    setDeskripsi(resep.description || ""); // 🆕
+    setDeskripsi(resep.description); 
     setBahan(resep.ingredients);
     setLangkah(resep.steps);
     setGambar(resep.image);
@@ -122,17 +122,24 @@ function MyRecipes() {
         <h2 className="text-2xl font-bold">Resep Saya</h2>
         <button
           onClick={() => setTampilForm(true)}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 
+             text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg 
+             text-sm sm:text-base transition"
         >
-          <PlusCircle size={20} />
-          Tambah Resep
+          <PlusCircle className="w-5 h-5 sm:w-6 sm:h-6" />{" "}
+          <span className="hidden sm:inline">Tambah Resep</span>
+          <span className="sm:hidden">Tambah</span>
         </button>
       </div>
 
       {/* Pop Up Form Tambah / Edit Resep */}
       {tampilForm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+          <div
+            className="bg-white shadow-lg rounded-xl p-6 
+                          w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] 
+                          max-w-lg max-h-[80vh] overflow-y-auto"
+          >
             <h3 className="text-xl font-bold mb-4">
               {editId ? "Edit Resep" : "Tambah Resep Baru"}
             </h3>

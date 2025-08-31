@@ -19,7 +19,9 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const daftarPengguna = JSON.parse(localStorage.getItem("daftarPengguna") || "[]");
+    const daftarPengguna = JSON.parse(
+      localStorage.getItem("daftarPengguna") || "[]"
+    );
 
     const penggunaDitemukan = daftarPengguna.find(
       (p) => p.username === namaPengguna && p.password === kataSandi
@@ -35,21 +37,24 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-orange-100">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 px-4">
+      <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md">
+        {/* Judul */}
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800">
           Masuk
         </h1>
         <p className="text-center text-gray-500 mb-6 text-sm">
           Gunakan akun yang sudah terdaftar
         </p>
 
+        {/* Pesan Error */}
         {pesanError && (
           <div className="mb-4 bg-red-100 text-red-600 text-sm px-4 py-2 rounded-lg">
             {pesanError}
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Username */}
           <div className="relative">
@@ -59,7 +64,7 @@ function Login() {
               placeholder="Username"
               value={namaPengguna}
               onChange={(e) => setNamaPengguna(e.target.value)}
-              className="w-full border rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-orange-400 outline-none text-gray-700"
+              className="w-full border rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-orange-400 outline-none text-gray-700"
               required
             />
           </div>
@@ -72,7 +77,7 @@ function Login() {
               placeholder="Password"
               value={kataSandi}
               onChange={(e) => setKataSandi(e.target.value)}
-              className="w-full border rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-orange-400 outline-none text-gray-700"
+              className="w-full border rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-orange-400 outline-none text-gray-700"
               required
             />
           </div>
@@ -80,15 +85,19 @@ function Login() {
           {/* Tombol Login */}
           <button
             type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-lg font-medium hover:bg-orange-600 transition shadow-md"
+            className="w-full bg-orange-500 text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition shadow-md"
           >
             Masuk
           </button>
         </form>
 
+        {/* Link ke Registrasi */}
         <p className="text-center mt-6 text-sm text-gray-600">
           Belum punya akun?{" "}
-          <Link to="/register" className="text-orange-600 font-medium hover:underline">
+          <Link
+            to="/register"
+            className="text-orange-600 font-medium hover:underline"
+          >
             Daftar
           </Link>
         </p>

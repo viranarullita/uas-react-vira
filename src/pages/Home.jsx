@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import recipeData from "../recipe.json"; // 👈 langsung import
 
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
@@ -21,16 +22,9 @@ const Home = () => {
   const [canScrollRight, setCanScrollRight] = useState(false);
 
   useEffect(() => {
-    fetch("/recipe.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setRecipes(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        setIsLoading(false);
-      });
+    // langsung pakai data dari import
+    setRecipes(recipeData);
+    setIsLoading(false);
   }, []);
 
   // cek posisi scroll untuk resep terbaru

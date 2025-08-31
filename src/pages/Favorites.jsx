@@ -1,41 +1,22 @@
-import { useEffect, useState } from "react";
+// Favorites.jsx
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Bookmark } from "lucide-react";
+import { RecipeContext } from "../context/RecipeContext";
 
 function Favorites() {
-  const userId = localStorage.getItem("penggunaAktifId");
-  const storageKeyFavorit = `statusFavoritResep_${userId}`;
+  const { recipes, favorites } = useContext(RecipeContext);
+  const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
 
-  const [listResep, setListResep] = useState([]);
-  const [statusFavorit, setStatusFavorit] = useState({});
   const [halamanSaatIni, setHalamanSaatIni] = useState(1);
-  const resepPerHalaman = 8; // jumlah resep per halaman
+  const resepPerHalaman = 8;
 
-  useEffect(() => {
-    // Ambil semua resep
-    fetch("/recipe.json")
-      .then((res) => res.json())
-      .then((data) => {
-        let resepUser = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key.startsWith("recipes_")) {
-            resepUser = resepUser.concat(
-              JSON.parse(localStorage.getItem(key)) || []
-            );
-          }
-        }
-        setListResep([...data, ...resepUser]);
-      });
+  // Hanya tampilkan resep yang difavoritkan user aktif
+  const favoritResep = recipes.filter((r) =>
+    favorites[currentUserId]?.includes(r.id)
+  );
 
-    // Ambil favorit user
-    const tersimpan = localStorage.getItem(storageKeyFavorit);
-    setStatusFavorit(tersimpan ? JSON.parse(tersimpan) : {});
-  }, [storageKeyFavorit]);
-
-  const favoritResep = listResep.filter((r) => statusFavorit[r.id]);
-
-  // Hitung pagination
+  // pagination
   const totalHalaman = Math.ceil(favoritResep.length / resepPerHalaman);
   const indexAwal = (halamanSaatIni - 1) * resepPerHalaman;
   const resepDitampilkan = favoritResep.slice(
@@ -46,14 +27,15 @@ function Favorites() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <Bookmark className="text-orange-500" /> Favorite Recipes
+        <Bookmark className="text-orange-500" /> Resep Favorit Saya
       </h2>
 
       {favoritResep.length === 0 ? (
-        <p className="text-gray-500">Belum ada resep favorit.</p>
+        <p className="text-gray-500">
+          Belum ada resep favorit untuk user ini.
+        </p>
       ) : (
         <>
-          {/* Grid Card */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {resepDitampilkan.map((resep) => (
               <Link
@@ -73,7 +55,6 @@ function Favorites() {
             ))}
           </div>
 
-          {/* Pagination */}
           {totalHalaman > 1 && (
             <div className="flex justify-center items-center mt-6 space-x-4">
               <button
@@ -89,14 +70,14 @@ function Favorites() {
               >
                 « Prev
               </button>
-
               <span className="text-gray-700 font-semibold">
                 Hal {halamanSaatIni} dari {totalHalaman}
               </span>
-
               <button
                 onClick={() =>
-                  setHalamanSaatIni((prev) => Math.min(prev + 1, totalHalaman))
+                  setHalamanSaatIni((prev) =>
+                    Math.min(prev + 1, totalHalaman)
+                  )
                 }
                 disabled={halamanSaatIni === totalHalaman}
                 className={`px-4 py-2 rounded-lg font-medium transition ${

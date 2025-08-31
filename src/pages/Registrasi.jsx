@@ -42,9 +42,10 @@ function Registrasi() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 via-white to-orange-50">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md transform transition hover:scale-[1.01]">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 via-white to-orange-50 px-4">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
+        {/* Judul */}
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800">
           Registrasi
         </h1>
 
@@ -68,43 +69,36 @@ function Registrasi() {
 
         {/* Form */}
         <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1 font-medium text-gray-700">
-              Username
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                value={namaPengguna}
-                onChange={(e) => setNamaPengguna(e.target.value)}
-                className="w-full pl-10 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition"
-                placeholder="Buat username"
-                required
-              />
-            </div>
+          {/* Username */}
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              value={namaPengguna}
+              onChange={(e) => setNamaPengguna(e.target.value)}
+              className="w-full border rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition"
+              placeholder="Buat username"
+              required
+            />
           </div>
 
-          <div>
-            <label className="block text-sm mb-1 font-medium text-gray-700">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
-              <input
-                type="password"
-                value={kataSandi}
-                onChange={(e) => setKataSandi(e.target.value)}
-                className="w-full pl-10 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition"
-                placeholder="Buat password"
-                required
-              />
-            </div>
+          {/* Password */}
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="password"
+              value={kataSandi}
+              onChange={(e) => setKataSandi(e.target.value)}
+              className="w-full border rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none transition"
+              placeholder="Buat password"
+              required
+            />
           </div>
 
+          {/* Tombol Registrasi */}
           <button
             type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition font-medium shadow-md"
+            className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition font-medium shadow-md"
           >
             Daftar
           </button>

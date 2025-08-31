@@ -1,196 +1,58 @@
-import { useEffect, useState } from "react";
+// AllRecipes.jsx
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Bookmark, Clock, User, Calendar } from "lucide-react";
+import { RecipeContext } from "../context/RecipeContext";
 
-const AllRecipes = () => {
-  const [listResep, setListResep] = useState([]);
+export default function AllRecipes() {
+  const { recipes, favorites, likes, toggleFavorite, toggleLike } =
+    useContext(RecipeContext);
+
+  const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
+
+  // search & sort
   const [kataKunci, setKataKunci] = useState("");
   const [urutan, setUrutan] = useState("terbaru");
-  const [sedangMemuat, setSedangMemuat] = useState(true);
 
-  // Pagination
+  // pagination
   const [halamanAktif, setHalamanAktif] = useState(1);
   const jumlahResepPerHalaman = 12;
 
-  // Ambil userId aktif
-  const userId = localStorage.getItem("penggunaAktifId");
-  const storageKeySuka = `statusSukaResep_${userId}`;
-  const storageKeyFavorit = `statusFavoritResep_${userId}`;
-
-  // Like & Favorite (state per user)
-  const [statusSuka, setStatusSuka] = useState(() => {
-    const tersimpan = localStorage.getItem(storageKeySuka);
-    return tersimpan ? JSON.parse(tersimpan) : {};
-  });
-
-  const [statusFavorit, setStatusFavorit] = useState(() => {
-    const tersimpan = localStorage.getItem(storageKeyFavorit);
-    return tersimpan ? JSON.parse(tersimpan) : {};
-  });
-
-  // Ambil data dari JSON + localStorage user
-  useEffect(() => {
-    fetch("/recipe.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Gagal ambil data resep");
-        return res.json();
-      })
-      .then((dataJson) => {
-        // --- Ambil semua user ---
-        const daftarPengguna =
-          JSON.parse(localStorage.getItem("daftarPengguna")) || [];
-
-        let semuaResepUser = [];
-
-        daftarPengguna.forEach((u) => {
-          const key = `recipes_${u.id}`;
-          const resepUser = JSON.parse(localStorage.getItem(key)) || [];
-
-          const siap = resepUser.map((r) => ({
-            id: r.id,
-            title: r.title,
-            category: r.category,
-            cookTime: r.cookTime,
-            author: r.author,
-            createdAt: r.createdAt,
-            likesCount: r.likesCount ?? 0,
-            favsCount: r.favsCount ?? 0,
-            image: r.image,
-          }));
-
-          semuaResepUser = [...semuaResepUser, ...siap];
-        });
-
-        // Data bawaan dari JSON
-        const resepJsonSiap = dataJson.map((r) => ({
-          id: r.id,
-          title: r.title,
-          category: r.category,
-          cookTime: r.cookTime,
-          author: r.author,
-          createdAt: r.createdAt,
-          likesCount: r.likesCount ?? 0,
-          favsCount: r.favsCount ?? 0,
-          image: r.image,
-        }));
-
-        // Gabungkan semua
-        setListResep([...resepJsonSiap, ...semuaResepUser]);
-        setSedangMemuat(false);
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        setSedangMemuat(false);
-      });
-  }, []);
-
-  // Simpan status suka/favorit ke localStorage
-  useEffect(() => {
-    localStorage.setItem(storageKeySuka, JSON.stringify(statusSuka));
-  }, [statusSuka, storageKeySuka]);
-
-  useEffect(() => {
-    localStorage.setItem(storageKeyFavorit, JSON.stringify(statusFavorit));
-  }, [statusFavorit, storageKeyFavorit]);
-
-  // Fungsi bantu simpan ke localStorage
-  const simpanResepKeStorage = (resepBaru) => {
-    const daftarPengguna =
-      JSON.parse(localStorage.getItem("daftarPengguna")) || [];
-    let sudahSimpan = false;
-
-    daftarPengguna.forEach((u) => {
-      const key = `recipes_${u.id}`;
-      let resepUser = JSON.parse(localStorage.getItem(key)) || [];
-      const idx = resepUser.findIndex((r) => r.id === resepBaru.id);
-      if (idx !== -1) {
-        resepUser[idx] = resepBaru;
-        localStorage.setItem(key, JSON.stringify(resepUser));
-        sudahSimpan = true;
-      }
-    });
-
-    if (!sudahSimpan) {
-      // simpan di recipes_json
-      let resepJson = JSON.parse(localStorage.getItem("recipes_json")) || [];
-      const idx = resepJson.findIndex((r) => r.id === resepBaru.id);
-      if (idx !== -1) {
-        resepJson[idx] = resepBaru;
-      } else {
-        resepJson.push(resepBaru);
-      }
-      localStorage.setItem("recipes_json", JSON.stringify(resepJson));
+  // --- HELPER FUNCTION ---
+  const hitungLike = (resep) => {
+    let total = resep.likesCount || 0; 
+    for (const userId in likes) {
+      if (likes[userId]?.includes(resep.id)) total++;
     }
+    return total;
   };
 
-  // Toggle Like
-  const toggleSuka = (id) => {
-    setStatusSuka((prev) => {
-      const sudahSuka = !!prev[id];
-      const baru = { ...prev, [id]: !sudahSuka };
-
-      setListResep((prevList) =>
-        prevList.map((r) => {
-          if (r.id === id) {
-            const updated = {
-              ...r,
-              likesCount: r.likesCount + (sudahSuka ? -1 : 1),
-            };
-            simpanResepKeStorage(updated);
-            return updated;
-          }
-          return r;
-        })
-      );
-
-      return baru;
-    });
+  const hitungFavorit = (resep) => {
+    let total = resep.favsCount || 0; 
+    for (const userId in favorites) {
+      if (favorites[userId]?.includes(resep.id)) total++;
+    }
+    return total;
   };
 
-  // Toggle Favorit
-  const toggleFavorit = (id) => {
-    setStatusFavorit((prev) => {
-      const sudahFavorit = !!prev[id];
-      const baru = { ...prev, [id]: !sudahFavorit };
-
-      setListResep((prevList) =>
-        prevList.map((r) => {
-          if (r.id === id) {
-            const updated = {
-              ...r,
-              favsCount: r.favsCount + (sudahFavorit ? -1 : 1),
-            };
-            simpanResepKeStorage(updated);
-            return updated;
-          }
-          return r;
-        })
-      );
-
-      return baru;
-    });
+  const totalFavoritUser = () => {
+    const favsDariUser = favorites[currentUserId] || [];
+    return favsDariUser.length;
   };
 
-  if (sedangMemuat) {
-    return (
-      <div className="flex justify-center items-center h-64 text-gray-500 text-lg">
-        Memuat resep...
-      </div>
-    );
-  }
-
-  // Filter & Sort
-  const hasilPencarian = listResep
-    .filter((resep) =>
-      resep.title.toLowerCase().includes(kataKunci.toLowerCase())
+  // filter + sort
+  const hasilPencarian = recipes
+    .filter((r) =>
+      r.title.toLowerCase().includes(kataKunci.toLowerCase())
     )
     .sort((a, b) => {
-      if (urutan === "terbanyakLike") return b.likesCount - a.likesCount;
-      if (urutan === "terbanyakFavorit") return b.favsCount - a.favsCount;
+      if (urutan === "terbanyakLike") return hitungLike(b) - hitungLike(a);
+      if (urutan === "terbanyakFavorit")
+        return hitungFavorit(b) - hitungFavorit(a);
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
-  // Pagination Logic
+  // pagination slice
   const indexResepTerakhir = halamanAktif * jumlahResepPerHalaman;
   const indexResepPertama = indexResepTerakhir - jumlahResepPerHalaman;
   const resepSaatIni = hasilPencarian.slice(
@@ -226,82 +88,73 @@ const AllRecipes = () => {
         <div className="bg-white shadow-md rounded-full p-2 flex items-center gap-1 cursor-pointer">
           <Bookmark className="text-orange-500" size={22} />
           <span className="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-            {Object.values(statusFavorit).filter(Boolean).length}
+            {totalFavoritUser()}
           </span>
         </div>
       </div>
 
       {/* Recipes Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {resepSaatIni.map((resep) => (
-          <div
-            key={resep.id}
-            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition 
-             p-4 flex flex-col border-2 border-orange-100 
-             hover:border-orange-400"
-          >
-            <Link to={`/recipe/${resep.id}`}>
-              <img
-                src={resep.image}
-                alt={resep.title}
-                className="w-full h-40 object-cover rounded-lg mb-3"
-              />
-            </Link>
+        {resepSaatIni.map((resep) => {
+          const isLiked = likes[currentUserId]?.includes(resep.id);
+          const isFavorited = favorites[currentUserId]?.includes(resep.id);
 
-            <h3 className="text-lg font-semibold text-gray-800 truncate">
-              {resep.title}
-            </h3>
+          return (
+            <div
+              key={resep.id}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition p-4 flex flex-col border-2 border-orange-100 hover:border-orange-400"
+            >
+              <Link to={`/recipe/${resep.id}`}>
+                <img
+                  src={resep.image}
+                  alt={resep.title}
+                  className="w-full h-40 object-cover rounded-lg mb-3"
+                />
+              </Link>
 
-            <p className="text-sm text-gray-500 mb-2 truncate">
-              {resep.category}
-            </p>
+              <h3 className="text-lg font-semibold text-gray-800 truncate">{resep.title}</h3>
+              <p className="text-sm text-gray-500 mb-2 truncate">{resep.category}</p>
 
-            {/* Meta info */}
-            <div className="text-xs text-gray-500 space-y-1 mb-4">
-              <div className="flex justify-between">
-                <span className="flex items-center gap-1 max-w-[80px] truncate">
-                  <Clock size={14} /> {resep.cookTime}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar size={14} />{" "}
-                  {new Date(resep.createdAt).toLocaleDateString("id-ID")}
-                </span>
+              {/* Meta info */}
+              <div className="text-xs text-gray-500 space-y-1 mb-4">
+                <div className="flex justify-between">
+                  <span className="flex items-center gap-1 max-w-[80px] truncate">
+                    <Clock size={14} /> {resep.cookTime} menit
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Calendar size={14} /> {new Date(resep.createdAt).toLocaleDateString("id-ID")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <User size={14} /> {resep.author || "Unknown"}
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <User size={14} /> {resep.author}
+
+              {/* Like & Favorit */}
+              <div className="flex justify-between mt-auto">
+                <button
+                  className={`flex items-center gap-1 text-sm transition ${
+                    isLiked ? "text-red-500" : "text-gray-600 hover:text-red-500"
+                  }`}
+                  onClick={() => toggleLike(resep.id, currentUserId)}
+                >
+                  <Heart size={18} stroke={isLiked ? "red" : "gray"} fill={isLiked ? "red" : "none"} />
+                  {hitungLike(resep)}
+                </button>
+
+                <button
+                  className={`flex items-center gap-1 text-sm transition ${
+                    isFavorited ? "text-yellow-500" : "text-gray-600 hover:text-yellow-500"
+                  }`}
+                  onClick={() => toggleFavorite(resep.id, currentUserId)}
+                >
+                  <Bookmark size={18} stroke={isFavorited ? "gold" : "gray"} fill={isFavorited ? "gold" : "none"} />
+                  {hitungFavorit(resep)}
+                </button>
               </div>
             </div>
-
-            <div className="flex justify-between mt-auto">
-              <button
-                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-500"
-                onClick={() => toggleSuka(resep.id)}
-              >
-                <Heart
-                  size={18}
-                  style={{
-                    fill: statusSuka[resep.id] ? "red" : "white",
-                    cursor: "pointer",
-                  }}
-                />
-                {resep.likesCount + (statusSuka[resep.id] ? 1 : 0)}
-              </button>
-              <button
-                className="flex items-center gap-1 text-sm text-gray-600 hover:text-yellow-500"
-                onClick={() => toggleFavorit(resep.id)}
-              >
-                <Bookmark
-                  size={18}
-                  style={{
-                    fill: statusFavorit[resep.id] ? "gold" : "white",
-                    cursor: "pointer",
-                  }}
-                />
-                {resep.favsCount + (statusFavorit[resep.id] ? 1 : 0)}
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Pagination */}
@@ -309,11 +162,9 @@ const AllRecipes = () => {
         <button
           disabled={halamanAktif === 1}
           onClick={() => setHalamanAktif((h) => h - 1)}
-          className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium 
-                     disabled:opacity-40 disabled:cursor-not-allowed
-                     hover:bg-orange-600 transition"
+          className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-orange-600 transition"
         >
-          « Prev
+          Prev
         </button>
         <span className="text-gray-600 font-medium">
           Hal {halamanAktif} dari {totalHalaman}
@@ -321,15 +172,11 @@ const AllRecipes = () => {
         <button
           disabled={halamanAktif === totalHalaman}
           onClick={() => setHalamanAktif((h) => h + 1)}
-          className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium 
-                     disabled:opacity-40 disabled:cursor-not-allowed
-                     hover:bg-orange-600 transition"
+          className="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-orange-600 transition"
         >
-          Next »
+          Next
         </button>
       </div>
     </div>
   );
-};
-
-export default AllRecipes;
+}

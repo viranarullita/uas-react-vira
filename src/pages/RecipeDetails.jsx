@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import resepData from "../recipe.json"; 
 import {
   Clock,
   Utensils,
@@ -11,6 +12,7 @@ import {
   User,
 } from "lucide-react";
 
+
 function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,42 +20,29 @@ function RecipeDetails() {
   const [sedangMemuat, setSedangMemuat] = useState(true);
 
   useEffect(() => {
-    const idParsed = Number(id); // id pasti angka
+    const idParsed = Number(id);
 
-    async function ambilData() {
-      try {
-        // Ambil resep dari JSON
-        const res = await fetch("/recipe.json");
-        const data = await res.json();
+    // Ambil daftar user dari localStorage
+    const daftarPengguna =
+      JSON.parse(localStorage.getItem("daftarPengguna")) || [];
 
-        // Ambil daftar semua user
-        const daftarPengguna =
-          JSON.parse(localStorage.getItem("daftarPengguna")) || [];
+    // Ambil resep buatan semua user
+    let semuaResepUser = [];
+    daftarPengguna.forEach((user) => {
+      const resepUser =
+        JSON.parse(localStorage.getItem(`recipes_${user.id}`)) || [];
+      semuaResepUser = semuaResepUser.concat(resepUser);
+    });
 
-        // Ambil resep dari semua user
-        let semuaResepUser = [];
-        daftarPengguna.forEach((user) => {
-          const resepUser =
-            JSON.parse(localStorage.getItem(`recipes_${user.id}`)) || [];
-          semuaResepUser = semuaResepUser.concat(resepUser);
-        });
+    // Gabungkan resep dari JSON + resep user
+    const semuaResep = [...resepData, ...semuaResepUser];
 
-        // Gabungkan semua resep
-        const semuaResep = [...data, ...semuaResepUser];
+    // Cari resep berdasarkan id
+    const resepDitemukan =
+      semuaResep.find((resep) => resep.id === idParsed) || null;
 
-        // Cari resep sesuai id
-        const resepDitemukan =
-          semuaResep.find((resep) => resep.id === idParsed) || null;
-
-        setResepDipilih(resepDitemukan);
-      } catch (err) {
-        console.error("Gagal memuat data:", err);
-      } finally {
-        setSedangMemuat(false);
-      }
-    }
-
-    ambilData();
+    setResepDipilih(resepDitemukan);
+    setSedangMemuat(false);
   }, [id]);
 
   if (sedangMemuat)
@@ -84,43 +73,36 @@ function RecipeDetails() {
 
       {/* Gambar + Info */}
       <div className="grid md:grid-cols-2 gap-8 mb-10 items-start">
-        {/* Gambar */}
         <img
           src={resepDipilih.image}
           alt={resepDipilih.title}
           className="w-full h-80 object-cover rounded-2xl shadow-md"
         />
 
-        {/* Box Info */}
         <div className="bg-white rounded-2xl shadow p-6 space-y-3 max-h-96 overflow-y-auto pr-2 break-words">
-          <h2 className="text-2xl font-bold text-gray-800 break-words">
-            {resepDipilih.title}
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-800">{resepDipilih.title}</h2>
 
-          <p className="flex items-center text-gray-700 break-words">
-            <Utensils size={18} className="text-orange-500 mr-2 shrink-0" />
+          <p className="flex items-center text-gray-700">
+            <Utensils size={18} className="text-orange-500 mr-2" />
             <span className="font-semibold">Kategori:</span>
             <span className="ml-1">{resepDipilih.category}</span>
           </p>
 
-          <p className="flex items-center text-gray-700 break-words">
-            <Clock size={18} className="text-orange-500 mr-2 shrink-0" />
+          <p className="flex items-center text-gray-700">
+            <Clock size={18} className="text-orange-500 mr-2" />
             <span className="font-semibold">Waktu Memasak:</span>
             <span className="ml-1">{resepDipilih.cookTime || "-"}</span>
           </p>
 
-          <p className="flex items-center text-gray-700 break-words">
-            <User size={18} className="text-orange-500 mr-2 shrink-0" />
+          <p className="flex items-center text-gray-700">
+            <User size={18} className="text-orange-500 mr-2" />
             <span className="font-semibold">Author:</span>
             <span className="ml-1">{resepDipilih.author}</span>
           </p>
 
           {resepDipilih.description && (
-            <p className="flex items-start text-gray-700 break-words whitespace-pre-line">
-              <FileText
-                size={18}
-                className="text-orange-500 mr-2 shrink-0 mt-1"
-              />
+            <p className="flex items-start text-gray-700 whitespace-pre-line">
+              <FileText size={18} className="text-orange-500 mr-2 mt-1" />
               <span>
                 <span className="font-semibold mr-1">Deskripsi:</span>
                 {resepDipilih.description}
@@ -130,7 +112,7 @@ function RecipeDetails() {
         </div>
       </div>
 
-      {/* Bahan-bahan */}
+      {/* Bahan */}
       <div className="mb-10">
         <h3 className="flex items-center text-xl font-semibold text-orange-600 mb-3">
           <ShoppingBasket size={20} className="mr-2" /> Bahan-bahan
@@ -138,11 +120,8 @@ function RecipeDetails() {
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-gray-700 bg-white shadow rounded-2xl p-6 max-h-64 overflow-y-auto pr-2">
           {Array.isArray(resepDipilih.ingredients) ? (
             resepDipilih.ingredients.map((bahan, index) => (
-              <li key={index} className="flex items-start break-words">
-                <Circle
-                  size={14}
-                  className="text-orange-500 mr-2 mt-1 shrink-0"
-                />
+              <li key={index} className="flex items-start">
+                <Circle size={14} className="text-orange-500 mr-2 mt-1" />
                 {bahan}
               </li>
             ))
@@ -160,7 +139,7 @@ function RecipeDetails() {
         <ol className="space-y-3 text-gray-700 bg-white shadow rounded-2xl p-6 max-h-96 overflow-y-auto pr-2">
           {Array.isArray(resepDipilih.steps) ? (
             resepDipilih.steps.map((langkah, index) => (
-              <li key={index} className="flex break-words">
+              <li key={index} className="flex">
                 <span className="font-bold text-orange-500 mr-3">
                   {index + 1}.
                 </span>

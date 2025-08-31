@@ -6,7 +6,7 @@ import "./index.css";
 
 // Pages
 import Home from "./pages/Home.jsx";
-import AllRecipes from "./pages/AllRecipes.jsx";  
+import AllRecipes from "./pages/AllRecipes.jsx";
 import About from "./pages/About.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import MyRecipes from "./pages/MyRecipes.jsx";
@@ -17,15 +17,12 @@ import Registrasi from "./pages/Registrasi.jsx";
 // ProtectedRoute
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
+// Context
+import RecipeProvider from "./context/RecipeProvider.jsx";
+
 const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Registrasi />,
-  },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Registrasi /> },
   {
     path: "/",
     element: (
@@ -34,8 +31,8 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Home /> },                 
-      { path: "all-recipes", element: <AllRecipes /> },   
+      { index: true, element: <Home /> },
+      { path: "all-recipes", element: <AllRecipes /> },
       { path: "about", element: <About /> },
       { path: "favorites", element: <Favorites /> },
       { path: "my-recipes", element: <MyRecipes /> },
@@ -46,6 +43,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <RecipeProvider>
+      <RouterProvider router={router} />
+    </RecipeProvider>
   </StrictMode>
 );
