@@ -3,10 +3,6 @@ import { Link } from "react-router-dom";
 import { Bookmark } from "lucide-react";
 import { RecipeContext } from "../context/RecipeContext";
 
-/**
- * Favorites Component
- * Menampilkan daftar resep yang difavoritkan oleh pengguna aktif.
- */
 function Favorites() {
   const { recipes, favorites } = useContext(RecipeContext);
   const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";

@@ -63,7 +63,6 @@ const Home = () => {
 
   return (
     <div className="container mx-auto px-4 py-10">
-      {/* Bagian Hero */}
       <section
         className="w-full h-[280px] md:h-[440px] flex flex-col items-center justify-center text-center text-white relative overflow-hidden rounded-2xl"
         style={{

@@ -51,7 +51,6 @@ function Registrasi() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-orange-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
-        {/* Judul Halaman */}
         <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800">
           Sign Up
         </h1>
