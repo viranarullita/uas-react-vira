@@ -1,74 +1,69 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  Flame,
-  Sparkles,
-  Clock,
-  User,
-  Calendar,
-  Heart,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import recipeData from "../recipe.json"; // 👈 langsung import
+import { Flame, Sparkles, Clock, User, Calendar, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import dataResep from "../recipe.json"; 
 
 const Home = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [daftarResep, setDaftarResep] = useState([]); 
+  const [sedangMemuat, setSedangMemuat] = useState(true); 
 
-  // ref & state scroll untuk resep terbaru
-  const scrollRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  // Referensi dan state untuk fitur scroll
+  const refScroll = useRef(null); 
+  const [bisaScrollKiri, setBisaScrollKiri] = useState(false); 
+  const [bisaScrollKanan, setBisaScrollKanan] = useState(false); 
 
   useEffect(() => {
-    // langsung pakai data dari import
-    setRecipes(recipeData);
-    setIsLoading(false);
+    // Mengambil data resep dari file JSON saat komponen dimuat
+    setDaftarResep(dataResep);
+    setSedangMemuat(false);
   }, []);
 
-  // cek posisi scroll untuk resep terbaru
-  const checkScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
+  // Fungsi untuk memeriksa posisi scroll dan mengaktifkan/menonaktifkan tombol navigasi
+  const periksaScroll = () => {
+    const elemen = refScroll.current;
+    if (!elemen) return;
+    setBisaScrollKiri(elemen.scrollLeft > 0);
+    setBisaScrollKanan(elemen.scrollLeft + elemen.clientWidth < elemen.scrollWidth);
   };
 
   useEffect(() => {
-    checkScroll();
-    const el = scrollRef.current;
-    if (el) {
-      el.addEventListener("scroll", checkScroll);
-      window.addEventListener("resize", checkScroll);
+    periksaScroll();
+    const elemen = refScroll.current;
+    if (elemen) {
+      elemen.addEventListener("scroll", periksaScroll);
+      window.addEventListener("resize", periksaScroll);
     }
+    // Fungsi cleanup untuk menghapus event listener
     return () => {
-      if (el) el.removeEventListener("scroll", checkScroll);
-      window.removeEventListener("resize", checkScroll);
+      if (elemen) elemen.removeEventListener("scroll", periksaScroll);
+      window.removeEventListener("resize", periksaScroll);
     };
   }, []);
 
-  const scrollByAmount = (amount) => {
-    scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
+  // Fungsi untuk menggeser container scroll
+  const geserScroll = (jumlah) => {
+    refScroll.current.scrollBy({ left: jumlah, behavior: "smooth" });
   };
 
-  if (isLoading)
+  if (sedangMemuat) {
     return (
       <div className="text-center py-20 text-gray-500">Memuat resep...</div>
     );
+  }
 
-  // ambil resep populer & terbaru
-  const popularRecipes = [...recipes]
+  // Mengambil 3 resep terpopuler berdasarkan jumlah "suka"
+  const resepPopuler = [...daftarResep]
     .sort((a, b) => b.likesCount - a.likesCount)
     .slice(0, 3);
 
-  const newestRecipes = [...recipes]
+  // Mengambil 12 resep terbaru berdasarkan tanggal dibuat
+  const resepTerbaru = [...daftarResep]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 12);
 
   return (
     <div className="container mx-auto px-4 py-10">
-      {/* Hero Section */}
+      {/* Bagian Hero */}
       <section
         className="w-full h-[280px] md:h-[440px] flex flex-col items-center justify-center text-center text-white relative overflow-hidden rounded-2xl"
         style={{
@@ -95,7 +90,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Popular Recipes */}
+      {/* Bagian Resep Populer */}
       <section className="mt-12">
         <div className="flex items-center gap-2 mb-6">
           <Flame size={20} className="text-orange-600" />
@@ -105,45 +100,45 @@ const Home = () => {
         </div>
 
         <div className="flex flex-col gap-5">
-          {popularRecipes.map((recipe, idx) => (
-            <Link to={`/recipe/${recipe.id}`} key={recipe.id}>
+          {resepPopuler.map((resep, indeks) => (
+            <Link to={`/recipe/${resep.id}`} key={resep.id}>
               <div
-                className={`flex flex-col md:flex-row items-center md:items-stretch 
-                  bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden`}
+                className={`flex flex-col md:flex-row items-center md:items-stretch
+                bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden`}
               >
-                {/* Gambar */}
+                {/* Gambar Resep */}
                 <div
                   className={`md:w-5/12 w-full ${
-                    idx % 2 === 1 ? "md:order-2" : ""
+                    indeks % 2 === 1 ? "md:order-2" : ""
                   }`}
                 >
                   <img
-                    src={recipe.image}
-                    alt={recipe.title}
+                    src={resep.image}
+                    alt={resep.title}
                     className="w-full h-60 md:h-48 object-cover"
                   />
                 </div>
 
-                {/* Konten */}
+                {/* Konten Resep */}
                 <div
                   className={`md:w-8/12 w-full p-6 flex flex-col justify-center ${
-                    idx % 2 === 1 ? "md:order-1" : ""
+                    indeks % 2 === 1 ? "md:order-1" : ""
                   }`}
                 >
                   <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">
-                    {recipe.title}
+                    {resep.title}
                   </h3>
                   <p className="text-gray-700 mb-3 text-base leading-snug line-clamp-2">
-                    {recipe.description}
+                    {resep.description}
                   </p>
 
                   <div className="flex items-center justify-between text-sm md:text-base text-orange-600">
                     <span className="bg-gray-100 px-3 py-1 rounded-full shadow-sm">
-                      {recipe.category}
+                      {resep.category}
                     </span>
                     <span className="flex items-center gap-2 font-medium">
                       <Heart className="text-red-500" size={18} />
-                      {recipe.likesCount}
+                      {resep.likesCount}
                     </span>
                   </div>
                 </div>
@@ -153,56 +148,56 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Newest Recipes */}
+      {/* Bagian Resep Terbaru */}
       <section className="mt-12 relative">
         <h2 className="flex items-center gap-2 text-lg md:text-xl font-semibold text-gray-800 mb-5">
           <Sparkles size={20} className="text-orange-600" />
           Resep Terbaru
         </h2>
 
-        {/* Tombol kiri */}
-        {canScrollLeft && (
+        {/* Tombol Geser Kiri */}
+        {bisaScrollKiri && (
           <button
-            onClick={() => scrollByAmount(-250)}
+            onClick={() => geserScroll(-250)}
             className="absolute left-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 z-10"
           >
             <ChevronLeft size={20} />
           </button>
         )}
 
-        {/* Scroll container */}
+        {/* Container yang dapat di-scroll */}
         <div
-          ref={scrollRef}
+          ref={refScroll}
           className="flex gap-5 overflow-x-auto pb-3 scroll-smooth"
         >
-          {newestRecipes.map((recipe) => (
+          {resepTerbaru.map((resep) => (
             <div
               className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden min-w-[200px] md:min-w-[230px]"
-              key={recipe.id}
+              key={resep.id}
             >
-              <Link to={`/recipe/${recipe.id}`}>
+              <Link to={`/recipe/${resep.id}`}>
                 <img
-                  src={recipe.image}
-                  alt={recipe.title}
+                  src={resep.image}
+                  alt={resep.title}
                   className="w-full h-32 md:h-36 object-cover"
                 />
                 <div className="p-3">
                   <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-1 line-clamp-1">
-                    {recipe.title}
+                    {resep.title}
                   </h3>
                   <p className="text-xs text-orange-600 mb-2">
-                    {recipe.category}
+                    {resep.category}
                   </p>
                   <div className="flex flex-wrap gap-2 text-[11px] text-gray-500">
                     <span className="flex items-center gap-1">
-                      <Clock size={12} /> {recipe.cookTime}
+                      <Clock size={12} /> {resep.cookTime}
                     </span>
                     <span className="flex items-center gap-1">
-                      <User size={12} /> {recipe.author}
+                      <User size={12} /> {resep.author}
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar size={12} />
-                      {new Date(recipe.createdAt).toLocaleDateString("id-ID")}
+                      {new Date(resep.createdAt).toLocaleDateString("id-ID")}
                     </span>
                   </div>
                 </div>
@@ -211,10 +206,10 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Tombol kanan */}
-        {canScrollRight && (
+        {/* Tombol Geser Kanan */}
+        {bisaScrollKanan && (
           <button
-            onClick={() => scrollByAmount(250)}
+            onClick={() => geserScroll(250)}
             className="absolute right-0 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 z-10"
           >
             <ChevronRight size={20} />

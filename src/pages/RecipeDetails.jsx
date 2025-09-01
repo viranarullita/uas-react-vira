@@ -1,49 +1,42 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import resepData from "../recipe.json"; 
-import {
-  Clock,
-  Utensils,
-  ArrowLeft,
-  Circle,
-  FileText,
-  ShoppingBasket,
-  ListOrdered,
-  User,
-} from "lucide-react";
-
+import resepData from "../recipe.json";
+import { Clock, Utensils, ArrowLeft, Circle, FileText, ShoppingBasket, ListOrdered, User } from "lucide-react";
 
 function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  // State untuk menyimpan data resep yang dipilih dan status loading
   const [resepDipilih, setResepDipilih] = useState(null);
   const [sedangMemuat, setSedangMemuat] = useState(true);
 
   useEffect(() => {
+    // Mengubah ID dari string ke number
     const idParsed = Number(id);
 
-    // Ambil daftar user dari localStorage
+    // Mengambil daftar pengguna dari localStorage
     const daftarPengguna =
       JSON.parse(localStorage.getItem("daftarPengguna")) || [];
 
-    // Ambil resep buatan semua user
+    // Menggabungkan resep dari JSON bawaan dan resep buatan user
     let semuaResepUser = [];
     daftarPengguna.forEach((user) => {
       const resepUser =
         JSON.parse(localStorage.getItem(`recipes_${user.id}`)) || [];
       semuaResepUser = semuaResepUser.concat(resepUser);
     });
-
-    // Gabungkan resep dari JSON + resep user
     const semuaResep = [...resepData, ...semuaResepUser];
 
-    // Cari resep berdasarkan id
+    // Mencari resep berdasarkan ID yang cocok
     const resepDitemukan =
       semuaResep.find((resep) => resep.id === idParsed) || null;
 
     setResepDipilih(resepDitemukan);
     setSedangMemuat(false);
   }, [id]);
+
+  // --- Tampilan saat Loading atau Resep Tidak Ditemukan ---
 
   if (sedangMemuat)
     return (
@@ -61,6 +54,8 @@ function RecipeDetails() {
       </div>
     );
 
+  // --- Tampilan Detail Resep ---
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Tombol Kembali */}
@@ -71,7 +66,7 @@ function RecipeDetails() {
         <ArrowLeft size={18} /> Kembali
       </button>
 
-      {/* Gambar + Info */}
+      {/* Gambar + Info Resep */}
       <div className="grid md:grid-cols-2 gap-8 mb-10 items-start">
         <img
           src={resepDipilih.image}
@@ -80,7 +75,9 @@ function RecipeDetails() {
         />
 
         <div className="bg-white rounded-2xl shadow p-6 space-y-3 max-h-96 overflow-y-auto pr-2 break-words">
-          <h2 className="text-2xl font-bold text-gray-800">{resepDipilih.title}</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {resepDipilih.title}
+          </h2>
 
           <p className="flex items-center text-gray-700">
             <Utensils size={18} className="text-orange-500 mr-2" />
@@ -112,7 +109,7 @@ function RecipeDetails() {
         </div>
       </div>
 
-      {/* Bahan */}
+      {/* Bagian Bahan-bahan */}
       <div className="mb-10">
         <h3 className="flex items-center text-xl font-semibold text-orange-600 mb-3">
           <ShoppingBasket size={20} className="mr-2" /> Bahan-bahan
@@ -126,12 +123,13 @@ function RecipeDetails() {
               </li>
             ))
           ) : (
+            // Jika ingredients bukan array, tampilkan langsung
             <li>{resepDipilih.ingredients}</li>
           )}
         </ul>
       </div>
 
-      {/* Langkah */}
+      {/* Bagian Langkah-langkah */}
       <div>
         <h3 className="flex items-center text-xl font-semibold text-orange-600 mb-3">
           <ListOrdered size={20} className="mr-2" /> Cara Membuat
@@ -147,6 +145,7 @@ function RecipeDetails() {
               </li>
             ))
           ) : (
+            // Jika steps bukan array, tampilkan langsung
             <li>{resepDipilih.steps}</li>
           )}
         </ol>

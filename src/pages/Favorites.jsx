@@ -1,22 +1,26 @@
-// Favorites.jsx
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Bookmark } from "lucide-react";
 import { RecipeContext } from "../context/RecipeContext";
 
+/**
+ * Favorites Component
+ * Menampilkan daftar resep yang difavoritkan oleh pengguna aktif.
+ */
 function Favorites() {
   const { recipes, favorites } = useContext(RecipeContext);
   const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
 
+  // State untuk pagination
   const [halamanSaatIni, setHalamanSaatIni] = useState(1);
   const resepPerHalaman = 8;
 
-  // Hanya tampilkan resep yang difavoritkan user aktif
+  // Filter resep hanya yang difavoritkan oleh pengguna aktif
   const favoritResep = recipes.filter((r) =>
     favorites[currentUserId]?.includes(r.id)
   );
 
-  // pagination
+  // Logika pagination
   const totalHalaman = Math.ceil(favoritResep.length / resepPerHalaman);
   const indexAwal = (halamanSaatIni - 1) * resepPerHalaman;
   const resepDitampilkan = favoritResep.slice(
@@ -36,6 +40,7 @@ function Favorites() {
         </p>
       ) : (
         <>
+          {/* Grid Resep Favorit */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {resepDitampilkan.map((resep) => (
               <Link
@@ -55,12 +60,11 @@ function Favorites() {
             ))}
           </div>
 
+          {/* Navigasi Pagination */}
           {totalHalaman > 1 && (
             <div className="flex justify-center items-center mt-6 space-x-4">
               <button
-                onClick={() =>
-                  setHalamanSaatIni((prev) => Math.max(prev - 1, 1))
-                }
+                onClick={() => setHalamanSaatIni((prev) => Math.max(prev - 1, 1))}
                 disabled={halamanSaatIni === 1}
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   halamanSaatIni === 1
@@ -74,11 +78,7 @@ function Favorites() {
                 Hal {halamanSaatIni} dari {totalHalaman}
               </span>
               <button
-                onClick={() =>
-                  setHalamanSaatIni((prev) =>
-                    Math.min(prev + 1, totalHalaman)
-                  )
-                }
+                onClick={() => setHalamanSaatIni((prev) => Math.min(prev + 1, totalHalaman))}
                 disabled={halamanSaatIni === totalHalaman}
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   halamanSaatIni === totalHalaman

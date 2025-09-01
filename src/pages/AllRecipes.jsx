@@ -1,69 +1,82 @@
-// AllRecipes.jsx
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Bookmark, Clock, User, Calendar } from "lucide-react";
 import { RecipeContext } from "../context/RecipeContext";
 
-export default function AllRecipes() {
+function AllRecipes() {
+  // Mengambil state dan fungsi global dari Context
   const { recipes, favorites, likes, toggleFavorite, toggleLike } =
     useContext(RecipeContext);
 
+  // Mengidentifikasi pengguna aktif dari localStorage, default 'guest' jika tidak ada
   const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
 
-  // search & sort
+  // State untuk mengontrol filter pencarian dan pengurutan
   const [kataKunci, setKataKunci] = useState("");
   const [urutan, setUrutan] = useState("terbaru");
 
-  // pagination
+  // State untuk mengelola pagination
   const [halamanAktif, setHalamanAktif] = useState(1);
-  const jumlahResepPerHalaman = 12;
+  const jumlahResepPerHalaman = 8;
 
-  // --- HELPER FUNCTION ---
+  // --- Fungsi Bantuan (Helper Functions) ---
+
+  // Menghitung total like untuk sebuah resep
   const hitungLike = (resep) => {
-    let total = resep.likesCount || 0; 
+    let total = resep.likesCount || 0;
+    // Menambahkan jumlah like dari setiap user yang tersimpan di state 'likes'
     for (const userId in likes) {
       if (likes[userId]?.includes(resep.id)) total++;
     }
     return total;
   };
 
+  // Menghitung total favorit untuk sebuah resep
   const hitungFavorit = (resep) => {
-    let total = resep.favsCount || 0; 
+    let total = resep.favsCount || 0;
+    // Menambahkan jumlah favorit dari setiap user yang tersimpan di state 'favorites'
     for (const userId in favorites) {
       if (favorites[userId]?.includes(resep.id)) total++;
     }
     return total;
   };
 
+  // Menghitung jumlah total resep favorit untuk pengguna aktif
   const totalFavoritUser = () => {
     const favsDariUser = favorites[currentUserId] || [];
     return favsDariUser.length;
   };
 
-  // filter + sort
-  const hasilPencarian = recipes
-    .filter((r) =>
-      r.title.toLowerCase().includes(kataKunci.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (urutan === "terbanyakLike") return hitungLike(b) - hitungLike(a);
-      if (urutan === "terbanyakFavorit")
-        return hitungFavorit(b) - hitungFavorit(a);
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    });
+  // --- Logika Filter, Sort, dan Pagination ---
 
-  // pagination slice
+  // 1. Filter resep berdasarkan kata kunci
+  const hasilPencarian = recipes.filter((r) =>
+    r.title.toLowerCase().includes(kataKunci.toLowerCase())
+  );
+
+  // 2. Mengurutkan hasil pencarian
+  hasilPencarian.sort((a, b) => {
+    if (urutan === "terbanyakLike") return hitungLike(b) - hitungLike(a);
+    if (urutan === "terbanyakFavorit") return hitungFavorit(b) - hitungFavorit(a);
+    // Pengurutan default: berdasarkan tanggal terbaru
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  // 3. Memotong array resep untuk pagination
   const indexResepTerakhir = halamanAktif * jumlahResepPerHalaman;
   const indexResepPertama = indexResepTerakhir - jumlahResepPerHalaman;
   const resepSaatIni = hasilPencarian.slice(
     indexResepPertama,
     indexResepTerakhir
   );
+
+  // Menghitung total halaman yang diperlukan
   const totalHalaman = Math.ceil(hasilPencarian.length / jumlahResepPerHalaman);
 
+  // --- Render Tampilan (JSX) ---
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Toolbar */}
+      {/* Toolbar Pencarian dan Pengurutan */}
       <div className="flex flex-col md:flex-row gap-4 mb-3">
         <input
           type="text"
@@ -83,7 +96,7 @@ export default function AllRecipes() {
         </select>
       </div>
 
-      {/* Bookmark Counter */}
+      {/* Counter Resep Favorit Pengguna */}
       <div className="fixed top-20 right-6 z-30">
         <div className="bg-white shadow-md rounded-full p-2 flex items-center gap-1 cursor-pointer">
           <Bookmark className="text-orange-500" size={22} />
@@ -93,7 +106,7 @@ export default function AllRecipes() {
         </div>
       </div>
 
-      {/* Recipes Grid */}
+      {/* Grid Resep */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {resepSaatIni.map((resep) => {
           const isLiked = likes[currentUserId]?.includes(resep.id);
@@ -111,11 +124,10 @@ export default function AllRecipes() {
                   className="w-full h-40 object-cover rounded-lg mb-3"
                 />
               </Link>
-
               <h3 className="text-lg font-semibold text-gray-800 truncate">{resep.title}</h3>
               <p className="text-sm text-gray-500 mb-2 truncate">{resep.category}</p>
 
-              {/* Meta info */}
+              {/* Info Resep */}
               <div className="text-xs text-gray-500 space-y-1 mb-4">
                 <div className="flex justify-between">
                   <span className="flex items-center gap-1 max-w-[80px] truncate">
@@ -130,7 +142,7 @@ export default function AllRecipes() {
                 </div>
               </div>
 
-              {/* Like & Favorit */}
+              {/* Tombol Like & Favorit */}
               <div className="flex justify-between mt-auto">
                 <button
                   className={`flex items-center gap-1 text-sm transition ${
@@ -141,7 +153,6 @@ export default function AllRecipes() {
                   <Heart size={18} stroke={isLiked ? "red" : "gray"} fill={isLiked ? "red" : "none"} />
                   {hitungLike(resep)}
                 </button>
-
                 <button
                   className={`flex items-center gap-1 text-sm transition ${
                     isFavorited ? "text-yellow-500" : "text-gray-600 hover:text-yellow-500"
@@ -157,7 +168,7 @@ export default function AllRecipes() {
         })}
       </div>
 
-      {/* Pagination */}
+      {/* Navigasi Pagination */}
       <div className="flex justify-center items-center gap-4 mt-8 text-sm">
         <button
           disabled={halamanAktif === 1}
@@ -180,3 +191,5 @@ export default function AllRecipes() {
     </div>
   );
 }
+
+export default  AllRecipes;

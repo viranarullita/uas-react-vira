@@ -4,7 +4,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 
-// Pages
 import Home from "./pages/Home.jsx";
 import AllRecipes from "./pages/AllRecipes.jsx";
 import About from "./pages/About.jsx";
@@ -14,12 +13,11 @@ import RecipeDetails from "./pages/RecipeDetails.jsx";
 import Login from "./pages/Login.jsx";
 import Registrasi from "./pages/Registrasi.jsx";
 
-// ProtectedRoute
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
-// Context
 import RecipeProvider from "./context/RecipeProvider.jsx";
 
+// Mengatur konfigurasi router menggunakan `createBrowserRouter`
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Registrasi /> },
@@ -31,7 +29,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <Home /> }, 
       { path: "all-recipes", element: <AllRecipes /> },
       { path: "about", element: <About /> },
       { path: "favorites", element: <Favorites /> },
@@ -41,8 +39,10 @@ const router = createBrowserRouter([
   },
 ]);
 
+// Merender aplikasi ke DOM
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    {/* Menggunakan RecipeProvider untuk menyediakan data global */}
     <RecipeProvider>
       <RouterProvider router={router} />
     </RecipeProvider>

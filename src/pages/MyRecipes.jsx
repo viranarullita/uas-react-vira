@@ -8,20 +8,23 @@ function MyRecipes() {
     (u) => u.id === parseInt(penggunaAktifId)
   );
 
+  // State untuk menyimpan daftar resep milik pengguna
   const [resepSaya, setResepSaya] = useState([]);
+  // State untuk menampilkan/menyembunyikan form
   const [tampilForm, setTampilForm] = useState(false);
+  // State untuk melacak ID resep yang akan diedit
   const [editId, setEditId] = useState(null);
 
-  // state inputan resep
+  // State untuk inputan form resep
   const [judul, setJudul] = useState("");
   const [kategori, setKategori] = useState("");
   const [waktu, setWaktu] = useState("");
-  const [deskripsi, setDeskripsi] = useState(""); // 🆕
+  const [deskripsi, setDeskripsi] = useState("");
   const [bahan, setBahan] = useState("");
   const [langkah, setLangkah] = useState("");
   const [gambar, setGambar] = useState("");
 
-  // ambil resep user dari localStorage
+  // Efek untuk memuat resep dari localStorage saat komponen dimuat
   useEffect(() => {
     const dataResep = JSON.parse(
       localStorage.getItem(`recipes_${penggunaAktifId}`)
@@ -29,12 +32,12 @@ function MyRecipes() {
     if (dataResep) setResepSaya(dataResep);
   }, [penggunaAktifId]);
 
-  // simpan / update resep
+  // Fungsi untuk menyimpan atau mengupdate resep
   const handleSimpanResep = (e) => {
     e.preventDefault();
 
     if (editId) {
-      // update resep
+      // Logika update resep
       const updated = resepSaya.map((r) =>
         r.id === editId
           ? {
@@ -42,7 +45,7 @@ function MyRecipes() {
               title: judul,
               category: kategori,
               cookTime: waktu,
-              description: deskripsi, 
+              description: deskripsi,
               ingredients: bahan,
               steps: langkah,
               image: gambar,
@@ -50,65 +53,55 @@ function MyRecipes() {
           : r
       );
       setResepSaya(updated);
-      localStorage.setItem(
-        `recipes_${penggunaAktifId}`,
-        JSON.stringify(updated)
-      );
+      localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
       setEditId(null);
     } else {
-      // tambah resep baru
+      // Logika tambah resep baru
       const resepBaru = {
-        id: Date.now(), // id unik resep
+        id: Date.now(),
         userId: penggunaAktifId,
         title: judul,
         category: kategori,
         cookTime: waktu,
-        description: deskripsi, // 🆕
+        description: deskripsi,
         ingredients: bahan,
         steps: langkah,
         image: gambar,
         author: penggunaAktif.username,
         createdAt: new Date().toISOString(),
       };
-
       const updated = [...resepSaya, resepBaru];
       setResepSaya(updated);
-      localStorage.setItem(
-        `recipes_${penggunaAktifId}`,
-        JSON.stringify(updated)
-      );
+      localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
     }
 
-    // reset form
+    // Reset form dan sembunyikan
     setJudul("");
     setKategori("");
     setWaktu("");
-    setDeskripsi(""); // 🆕
+    setDeskripsi("");
     setBahan("");
     setLangkah("");
     setGambar("");
     setTampilForm(false);
   };
 
-  // hapus resep
+  // Fungsi untuk menghapus resep
   const handleHapus = (id) => {
     if (confirm("Yakin ingin menghapus resep ini?")) {
       const updated = resepSaya.filter((r) => r.id !== id);
       setResepSaya(updated);
-      localStorage.setItem(
-        `recipes_${penggunaAktifId}`,
-        JSON.stringify(updated)
-      );
+      localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
     }
   };
 
-  // buka form edit
+  // Fungsi untuk membuka form edit dan mengisi data resep
   const handleEdit = (resep) => {
     setEditId(resep.id);
     setJudul(resep.title);
     setKategori(resep.category);
     setWaktu(resep.cookTime);
-    setDeskripsi(resep.description); 
+    setDeskripsi(resep.description);
     setBahan(resep.ingredients);
     setLangkah(resep.steps);
     setGambar(resep.image);
@@ -117,29 +110,23 @@ function MyRecipes() {
 
   return (
     <div className="p-6">
-      {/* Header */}
+      {/* Header Halaman */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Resep Saya</h2>
         <button
           onClick={() => setTampilForm(true)}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 
-             text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg 
-             text-sm sm:text-base transition"
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base transition"
         >
-          <PlusCircle className="w-5 h-5 sm:w-6 sm:h-6" />{" "}
+          <PlusCircle className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="hidden sm:inline">Tambah Resep</span>
           <span className="sm:hidden">Tambah</span>
         </button>
       </div>
 
-      {/* Pop Up Form Tambah / Edit Resep */}
+      {/* Pop-up Form */}
       {tampilForm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-          <div
-            className="bg-white shadow-lg rounded-xl p-6 
-                          w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] 
-                          max-w-lg max-h-[80vh] overflow-y-auto"
-          >
+          <div className="bg-white shadow-lg rounded-xl p-6 w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] max-w-lg max-h-[80vh] overflow-y-auto">
             <h3 className="text-xl font-bold mb-4">
               {editId ? "Edit Resep" : "Tambah Resep Baru"}
             </h3>
@@ -154,7 +141,6 @@ function MyRecipes() {
                   required
                 />
               </div>
-
               <div className="mb-4">
                 <label className="block font-medium">Kategori</label>
                 <input
@@ -165,7 +151,6 @@ function MyRecipes() {
                   required
                 />
               </div>
-
               <div className="mb-4">
                 <label className="block font-medium">Waktu Memasak</label>
                 <input
@@ -176,8 +161,6 @@ function MyRecipes() {
                   required
                 />
               </div>
-
-              {/* 🆕 Input Deskripsi */}
               <div className="mb-4">
                 <label className="block font-medium">Deskripsi</label>
                 <textarea
@@ -187,7 +170,6 @@ function MyRecipes() {
                   required
                 ></textarea>
               </div>
-
               <div className="mb-4">
                 <label className="block font-medium">Bahan</label>
                 <textarea
@@ -197,7 +179,6 @@ function MyRecipes() {
                   required
                 ></textarea>
               </div>
-
               <div className="mb-4">
                 <label className="block font-medium">Langkah-langkah</label>
                 <textarea
@@ -207,7 +188,6 @@ function MyRecipes() {
                   required
                 ></textarea>
               </div>
-
               <div className="mb-4">
                 <label className="block font-medium">URL Gambar</label>
                 <input
@@ -218,8 +198,6 @@ function MyRecipes() {
                   required
                 />
               </div>
-
-              {/* Tombol Aksi */}
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   type="button"
@@ -243,7 +221,7 @@ function MyRecipes() {
         </div>
       )}
 
-      {/* Daftar Resep */}
+      {/* Daftar Resep Pengguna */}
       {resepSaya.length === 0 ? (
         <p className="text-center text-gray-600">Belum ada resep.</p>
       ) : (
@@ -265,8 +243,6 @@ function MyRecipes() {
                 <p className="text-sm text-orange-500 font-medium">
                   {resep.category}
                 </p>
-
-                {/* Tombol Edit & Hapus di bawah */}
                 <div className="flex justify-between mt-4">
                   <button
                     onClick={() => handleEdit(resep)}

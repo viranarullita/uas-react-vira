@@ -3,18 +3,21 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Home, BookOpen, User, Bookmark, Info, Menu, X } from "lucide-react";
 
 const Header = () => {
+  // State untuk mengelola visibilitas menu di perangkat mobile
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Fungsi untuk menangani proses logout
   const handleLogout = () => {
     localStorage.removeItem("penggunaAktifId");
     navigate("/login");
   };
 
+  // Fungsi untuk menentukan kelas CSS berdasarkan status aktif NavLink
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-1 px-3 py-2 rounded-lg transition ${
       isActive
-        ? "text-orange-600 font-semibold" 
+        ? "text-orange-600 font-semibold"
         : "text-gray-700 hover:text-orange-500"
     }`;
 
@@ -26,7 +29,7 @@ const Header = () => {
           CookRecipe
         </Link>
 
-        {/* Tombol Hamburger (muncul di mobile & tablet, hilang di desktop) */}
+        {/* Tombol Hamburger (muncul di layar kecil) */}
         <button
           className="lg:hidden text-gray-700"
           onClick={() => setIsOpen(!isOpen)}
@@ -34,13 +37,14 @@ const Header = () => {
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Navigation */}
+        {/* Navigasi Utama */}
+        {/* Kelas dinamis untuk menyembunyikan/menampilkan menu di mobile */}
         <nav
           className={`${
             isOpen ? "block" : "hidden"
           } absolute lg:static top-full left-0 w-full lg:w-auto bg-white lg:bg-transparent lg:flex lg:items-center lg:gap-6 shadow-md lg:shadow-none`}
         >
-          {/* Menu utama */}
+          {/* Kelompok Link Navigasi */}
           <div className="flex flex-col lg:flex-row lg:gap-4 p-4 lg:p-0">
             <NavLink
               to="/"

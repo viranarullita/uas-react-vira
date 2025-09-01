@@ -8,7 +8,7 @@ function Login() {
   const [pesanError, setPesanError] = useState("");
   const navigate = useNavigate();
 
-  // kalau sudah login, langsung redirect ke beranda
+  // Efek untuk mengarahkan pengguna ke halaman utama jika sudah login
   useEffect(() => {
     const penggunaAktif = localStorage.getItem("penggunaAktifId");
     if (penggunaAktif) {
@@ -19,10 +19,12 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
 
+    // Mengambil daftar pengguna dari localStorage
     const daftarPengguna = JSON.parse(
       localStorage.getItem("daftarPengguna") || "[]"
     );
 
+    // Mencari pengguna yang cocok dengan input
     const penggunaDitemukan = daftarPengguna.find(
       (p) => p.username === namaPengguna && p.password === kataSandi
     );
@@ -32,6 +34,7 @@ function Login() {
       return;
     }
 
+    // Menyimpan ID pengguna aktif dan mengarahkan ke halaman utama
     localStorage.setItem("penggunaAktifId", penggunaDitemukan.id);
     navigate("/");
   };
@@ -39,7 +42,7 @@ function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-orange-100 px-4">
       <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md">
-        {/* Judul */}
+        {/* Judul Halaman */}
         <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800">
           Sign In
         </h1>
@@ -54,9 +57,9 @@ function Login() {
           </div>
         )}
 
-        {/* Form */}
+        {/* Form Login */}
         <form onSubmit={handleLogin} className="space-y-4">
-          {/* Username */}
+          {/* Input Username */}
           <div className="relative">
             <User
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -72,7 +75,7 @@ function Login() {
             />
           </div>
 
-          {/* Password */}
+          {/* Input Password */}
           <div className="relative">
             <Lock
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -97,7 +100,7 @@ function Login() {
           </button>
         </form>
 
-        {/* Link ke Registrasi */}
+        {/* Link ke halaman Registrasi */}
         <p className="text-center mt-6 text-sm text-gray-600">
           Belum punya akun?{" "}
           <Link

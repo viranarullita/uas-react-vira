@@ -12,11 +12,12 @@ function Registrasi() {
   const handleRegister = (e) => {
     e.preventDefault();
 
+    // Mengambil daftar pengguna dari localStorage
     const daftarPengguna = JSON.parse(
       localStorage.getItem("daftarPengguna") || "[]"
     );
 
-    // cek username sudah dipakai atau belum
+    // Memeriksa apakah username sudah terdaftar
     const adaUser = daftarPengguna.find((u) => u.username === namaPengguna);
     if (adaUser) {
       setPesan("Username sudah terdaftar, pilih yang lain.");
@@ -24,29 +25,33 @@ function Registrasi() {
       return;
     }
 
+    // Menentukan ID baru untuk pengguna
     const newId =
       daftarPengguna.length > 0
         ? daftarPengguna[daftarPengguna.length - 1].id + 1
         : 1;
 
+    // Menambahkan pengguna baru ke daftar
     daftarPengguna.push({
       id: newId,
       username: namaPengguna,
       password: kataSandi,
     });
 
+    // Menyimpan daftar pengguna yang diperbarui ke localStorage
     localStorage.setItem("daftarPengguna", JSON.stringify(daftarPengguna));
 
     setPesan("Registrasi berhasil! Silakan login.");
     setPesanTipe("success");
 
+    // Mengarahkan ke halaman login setelah 1.5 detik
     setTimeout(() => navigate("/login"), 1500);
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-orange-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
-        {/* Judul */}
+        {/* Judul Halaman */}
         <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800">
           Sign Up
         </h1>
@@ -54,7 +59,7 @@ function Registrasi() {
           Silahkan daftar untuk membuat akun
         </p>
 
-        {/* Pesan Alert */}
+        {/* Pesan Notifikasi (Sukses/Error) */}
         {pesan && (
           <div
             className={`flex items-center gap-2 px-4 py-2 rounded-lg mb-4 text-sm ${
@@ -72,9 +77,9 @@ function Registrasi() {
           </div>
         )}
 
-        {/* Form */}
+        {/* Form Registrasi */}
         <form onSubmit={handleRegister} className="space-y-4">
-          {/* Username */}
+          {/* Input Username */}
           <div className="relative">
             <User
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -90,7 +95,7 @@ function Registrasi() {
             />
           </div>
 
-          {/* Password */}
+          {/* Input Password */}
           <div className="relative">
             <Lock
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -115,7 +120,7 @@ function Registrasi() {
           </button>
         </form>
 
-        {/* Link ke Login */}
+        {/* Link ke halaman Login */}
         <p className="text-center mt-6 text-sm text-gray-600">
           Sudah punya akun?{" "}
           <Link
