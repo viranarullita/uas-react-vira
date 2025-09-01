@@ -37,11 +37,11 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-orange-100 px-4">
       <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-md">
         {/* Judul */}
         <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800">
-          Masuk
+          Sign In
         </h1>
         <p className="text-center text-gray-500 mb-6 text-sm">
           Gunakan akun yang sudah terdaftar
@@ -58,7 +58,10 @@ function Login() {
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Username */}
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <User
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Username"
@@ -71,7 +74,10 @@ function Login() {
 
           {/* Password */}
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="password"
               placeholder="Password"
@@ -87,7 +93,7 @@ function Login() {
             type="submit"
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition shadow-md"
           >
-            Masuk
+            Sign In
           </button>
         </form>
 
@@ -98,7 +104,7 @@ function Login() {
             to="/register"
             className="text-orange-600 font-medium hover:underline"
           >
-            Daftar
+            Sign Up
           </Link>
         </p>
       </div>

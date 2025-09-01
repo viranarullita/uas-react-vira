@@ -6,13 +6,15 @@ function Registrasi() {
   const [namaPengguna, setNamaPengguna] = useState("");
   const [kataSandi, setKataSandi] = useState("");
   const [pesan, setPesan] = useState("");
-  const [pesanTipe, setPesanTipe] = useState(""); // success / error
+  const [pesanTipe, setPesanTipe] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = (e) => {
     e.preventDefault();
 
-    const daftarPengguna = JSON.parse(localStorage.getItem("daftarPengguna") || "[]");
+    const daftarPengguna = JSON.parse(
+      localStorage.getItem("daftarPengguna") || "[]"
+    );
 
     // cek username sudah dipakai atau belum
     const adaUser = daftarPengguna.find((u) => u.username === namaPengguna);
@@ -42,12 +44,15 @@ function Registrasi() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 via-white to-orange-50 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-orange-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
         {/* Judul */}
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800">
-          Registrasi
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800">
+          Sign Up
         </h1>
+        <p className="text-center text-gray-500 mb-6 text-sm">
+          Silahkan daftar untuk membuat akun
+        </p>
 
         {/* Pesan Alert */}
         {pesan && (
@@ -71,7 +76,10 @@ function Registrasi() {
         <form onSubmit={handleRegister} className="space-y-4">
           {/* Username */}
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <User
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="text"
               value={namaPengguna}
@@ -84,7 +92,10 @@ function Registrasi() {
 
           {/* Password */}
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="password"
               value={kataSandi}
@@ -100,7 +111,7 @@ function Registrasi() {
             type="submit"
             className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition font-medium shadow-md"
           >
-            Daftar
+            Sign Up
           </button>
         </form>
 
@@ -111,7 +122,7 @@ function Registrasi() {
             to="/login"
             className="text-orange-600 hover:underline font-medium"
           >
-            Login
+            Sign In
           </Link>
         </p>
       </div>
