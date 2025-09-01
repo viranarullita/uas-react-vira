@@ -1,21 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { RecipeContext } from "../context/RecipeContext";
 
 function MyRecipes() {
+  // Ambil data pengguna aktif
   const penggunaAktifId = localStorage.getItem("penggunaAktifId");
-  const daftarPengguna = JSON.parse(localStorage.getItem("daftarPengguna"));
+  const daftarPengguna = JSON.parse(localStorage.getItem("daftarPengguna")) || [];
   const penggunaAktif = daftarPengguna.find(
     (u) => u.id === parseInt(penggunaAktifId)
   );
 
-  // State untuk menyimpan daftar resep milik pengguna
+  const { simpanResepUser } = useContext(RecipeContext);
+
+  // State daftar resep milik user
   const [resepSaya, setResepSaya] = useState([]);
-  // State untuk menampilkan/menyembunyikan form
+  // State untuk form popup
   const [tampilForm, setTampilForm] = useState(false);
-  // State untuk melacak ID resep yang akan diedit
+  // State untuk edit resep
   const [editId, setEditId] = useState(null);
 
-  // State untuk inputan form resep
+  // State form input
   const [judul, setJudul] = useState("");
   const [kategori, setKategori] = useState("");
   const [waktu, setWaktu] = useState("");
@@ -24,20 +28,30 @@ function MyRecipes() {
   const [langkah, setLangkah] = useState("");
   const [gambar, setGambar] = useState("");
 
-  // Efek untuk memuat resep dari localStorage saat komponen dimuat
+  // Load resep user dari localStorage
   useEffect(() => {
-    const dataResep = JSON.parse(
-      localStorage.getItem(`recipes_${penggunaAktifId}`)
-    );
-    if (dataResep) setResepSaya(dataResep);
+    const dataResep =
+      JSON.parse(localStorage.getItem(`recipes_${penggunaAktifId}`)) || [];
+    setResepSaya(dataResep);
   }, [penggunaAktifId]);
 
-  // Fungsi untuk menyimpan atau mengupdate resep
+  // Reset form
+  const resetForm = () => {
+    setJudul("");
+    setKategori("");
+    setWaktu("");
+    setDeskripsi("");
+    setBahan("");
+    setLangkah("");
+    setGambar("");
+  };
+
+  // Simpan / update resep
   const handleSimpanResep = (e) => {
     e.preventDefault();
 
     if (editId) {
-      // Logika update resep
+      // Update resep
       const updated = resepSaya.map((r) =>
         r.id === editId
           ? {
@@ -49,14 +63,21 @@ function MyRecipes() {
               ingredients: bahan,
               steps: langkah,
               image: gambar,
+              author: penggunaAktif?.username,
+              userId: penggunaAktifId,
             }
           : r
       );
       setResepSaya(updated);
       localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
+
+      // update context
+      const resepUpdate = updated.find((r) => r.id === editId);
+      simpanResepUser(resepUpdate);
+
       setEditId(null);
     } else {
-      // Logika tambah resep baru
+      // Tambah resep baru
       const resepBaru = {
         id: Date.now(),
         userId: penggunaAktifId,
@@ -67,26 +88,22 @@ function MyRecipes() {
         ingredients: bahan,
         steps: langkah,
         image: gambar,
-        author: penggunaAktif.username,
+        author: penggunaAktif?.username,
         createdAt: new Date().toISOString(),
       };
       const updated = [...resepSaya, resepBaru];
       setResepSaya(updated);
       localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
+
+      // simpan juga ke context
+      simpanResepUser(resepBaru);
     }
 
-    // Reset form dan sembunyikan
-    setJudul("");
-    setKategori("");
-    setWaktu("");
-    setDeskripsi("");
-    setBahan("");
-    setLangkah("");
-    setGambar("");
+    resetForm();
     setTampilForm(false);
   };
 
-  // Fungsi untuk menghapus resep
+  // Hapus resep
   const handleHapus = (id) => {
     if (confirm("Yakin ingin menghapus resep ini?")) {
       const updated = resepSaya.filter((r) => r.id !== id);
@@ -95,7 +112,7 @@ function MyRecipes() {
     }
   };
 
-  // Fungsi untuk membuka form edit dan mengisi data resep
+  // Edit resep
   const handleEdit = (resep) => {
     setEditId(resep.id);
     setJudul(resep.title);
@@ -204,6 +221,7 @@ function MyRecipes() {
                   onClick={() => {
                     setTampilForm(false);
                     setEditId(null);
+                    resetForm();
                   }}
                   className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg"
                 >
