@@ -26,7 +26,7 @@ function Favorites() {
 
       {favoritResep.length === 0 ? (
         <p className="text-gray-500">
-          Belum ada resep favorit untuk user ini.
+          Anda belum memiliki resep favorit
         </p>
       ) : (
         <>
