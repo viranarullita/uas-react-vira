@@ -4,7 +4,8 @@ import { Heart, Bookmark, Clock, User, Calendar } from "lucide-react";
 import { RecipeContext } from "../context/RecipeContext";
 
 function AllRecipes() {
-  const { recipes, favorites, likes, toggleFavorite, toggleLike } = useContext(RecipeContext);
+  const { recipes, favorites, likes, toggleFavorite, toggleLike } =
+    useContext(RecipeContext);
 
   const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
 
@@ -41,36 +42,44 @@ function AllRecipes() {
 
   hasilPencarian.sort((a, b) => {
     if (urutan === "terbanyakLike") return hitungLike(b) - hitungLike(a);
-    if (urutan === "terbanyakFavorit") return hitungFavorit(b) - hitungFavorit(a);
+    if (urutan === "terbanyakFavorit")
+      return hitungFavorit(b) - hitungFavorit(a);
+    if (urutan === "namaAZ") return a.title.localeCompare(b.title);
+    if (urutan === "namaZA") return b.title.localeCompare(a.title);
 
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
   const indexResepTerakhir = halamanAktif * jumlahResepPerHalaman;
   const indexResepPertama = indexResepTerakhir - jumlahResepPerHalaman;
-  const resepSaatIni = hasilPencarian.slice(indexResepPertama, indexResepTerakhir);
+  const resepSaatIni = hasilPencarian.slice(
+    indexResepPertama,
+    indexResepTerakhir
+  );
 
   const totalHalaman = Math.ceil(hasilPencarian.length / jumlahResepPerHalaman);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
 
-      <div className="flex flex-col md:flex-row gap-4 mb-3">
+      <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <input
           type="text"
           placeholder="Cari resep..."
           value={kataKunci}
           onChange={(e) => setKataKunci(e.target.value)}
-          className="flex-1 border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 outline-none max-w-2xl"
+          className="w-full sm:w-[26rem] md:w-[27rem] lg:w-[40rem] border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
         />
         <select
           value={urutan}
           onChange={(e) => setUrutan(e.target.value)}
-          className="border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 outline-none w-60"
+          className="w-full sm:w-48 md:w-48 lg:w-60 border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
         >
           <option value="terbaru">Terbaru</option>
           <option value="terbanyakLike">Terbanyak Like</option>
           <option value="terbanyakFavorit">Terbanyak Favorit</option>
+          <option value="namaAZ">Nama Resep (A-Z)</option>
+          <option value="namaZA">Nama Resep (Z-A)</option>
         </select>
       </div>
 
@@ -100,8 +109,12 @@ function AllRecipes() {
                   className="w-full h-40 object-cover rounded-lg mb-3"
                 />
               </Link>
-              <h3 className="text-lg font-semibold text-gray-800 truncate">{resep.title}</h3>
-              <p className="text-sm text-orange-600 mb-2 truncate">{resep.category}</p>
+              <h3 className="text-lg font-semibold text-gray-800 truncate">
+                {resep.title}
+              </h3>
+              <p className="text-sm text-orange-600 mb-2 truncate">
+                {resep.category}
+              </p>
 
               <div className="text-xs text-gray-500 space-y-1 mb-4">
                 <div className="flex justify-between">
@@ -109,7 +122,8 @@ function AllRecipes() {
                     <Clock size={14} /> {resep.cookTime} menit
                   </span>
                   <span className="flex items-center gap-1">
-                    <Calendar size={14} /> {new Date(resep.createdAt).toLocaleDateString("id-ID")}
+                    <Calendar size={14} />{" "}
+                    {new Date(resep.createdAt).toLocaleDateString("id-ID")}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -120,20 +134,32 @@ function AllRecipes() {
               <div className="flex justify-between mt-auto">
                 <button
                   className={`flex items-center gap-1 text-sm transition ${
-                    isLiked ? "text-red-500" : "text-gray-600 hover:text-red-500"
+                    isLiked
+                      ? "text-red-500"
+                      : "text-gray-600 hover:text-red-500"
                   }`}
                   onClick={() => toggleLike(resep.id, currentUserId)}
                 >
-                  <Heart size={18} stroke={isLiked ? "red" : "gray"} fill={isLiked ? "red" : "none"} />
+                  <Heart
+                    size={18}
+                    stroke={isLiked ? "red" : "gray"}
+                    fill={isLiked ? "red" : "none"}
+                  />
                   {hitungLike(resep)}
                 </button>
                 <button
                   className={`flex items-center gap-1 text-sm transition ${
-                    isFavorited ? "text-yellow-500" : "text-gray-600 hover:text-yellow-500"
+                    isFavorited
+                      ? "text-yellow-500"
+                      : "text-gray-600 hover:text-yellow-500"
                   }`}
                   onClick={() => toggleFavorite(resep.id, currentUserId)}
                 >
-                  <Bookmark size={18} stroke={isFavorited ? "gold" : "gray"} fill={isFavorited ? "gold" : "none"} />
+                  <Bookmark
+                    size={18}
+                    stroke={isFavorited ? "gold" : "gray"}
+                    fill={isFavorited ? "gold" : "none"}
+                  />
                   {hitungFavorit(resep)}
                 </button>
               </div>
@@ -165,4 +191,4 @@ function AllRecipes() {
   );
 }
 
-export default  AllRecipes;
+export default AllRecipes;
