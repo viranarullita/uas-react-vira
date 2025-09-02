@@ -4,8 +4,7 @@ import { Heart, Bookmark, Clock, User, Calendar } from "lucide-react";
 import { RecipeContext } from "../context/RecipeContext";
 
 function AllRecipes() {
-  const { recipes, favorites, likes, toggleFavorite, toggleLike } =
-    useContext(RecipeContext);
+  const { recipes, favorites, likes, toggleFavorite, toggleLike } = useContext(RecipeContext);
 
   const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
 
@@ -75,7 +74,7 @@ function AllRecipes() {
           onChange={(e) => setUrutan(e.target.value)}
           className="w-full sm:w-48 md:w-48 lg:w-60 border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 outline-none"
         >
-          <option value="terbaru">Terbaru</option>
+          <option value="terbaru">Resep Terbaru</option>
           <option value="terbanyakLike">Terbanyak Like</option>
           <option value="terbanyakFavorit">Terbanyak Favorit</option>
           <option value="namaAZ">Nama Resep (A-Z)</option>
