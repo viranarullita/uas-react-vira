@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Flame, Sparkles, Clock, User, Calendar, Heart, ChevronLeft, ChevronRight } from "lucide-react";
-import dataResep from "../recipe.json"; 
-
+import { RecipeContext } from "../context/RecipeContext";
+ 
 const Home = () => {
+  const { recipes } = useContext(RecipeContext); 
   const [daftarResep, setDaftarResep] = useState([]); 
   const [sedangMemuat, setSedangMemuat] = useState(true); 
 
@@ -12,9 +13,13 @@ const Home = () => {
   const [bisaScrollKanan, setBisaScrollKanan] = useState(false); 
 
   useEffect(() => {
-    setDaftarResep(dataResep);
+    if (recipes && recipes.length > 0) {
+      setDaftarResep(recipes);
+    } else {
+      setDaftarResep([]);
+    }
     setSedangMemuat(false);
-  }, []);
+  }, [recipes]); 
 
   const periksaScroll = () => {
     const elemen = refScroll.current;
@@ -56,6 +61,7 @@ const Home = () => {
 
   return (
     <div className="container mx-auto px-4 py-10">
+
       <section
         className="w-full h-[280px] md:h-[440px] flex flex-col items-center justify-center text-center text-white relative overflow-hidden rounded-2xl"
         style={{
@@ -97,7 +103,6 @@ const Home = () => {
                 className={`flex flex-col md:flex-row items-center md:items-stretch
                 bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden`}
               >
-                {/* Gambar Resep */}
                 <div
                   className={`md:w-5/12 w-full ${
                     indeks % 2 === 1 ? "md:order-2" : ""
@@ -110,7 +115,6 @@ const Home = () => {
                   />
                 </div>
 
-                {/* Konten Resep */}
                 <div
                   className={`md:w-8/12 w-full p-6 flex flex-col justify-center ${
                     indeks % 2 === 1 ? "md:order-1" : ""

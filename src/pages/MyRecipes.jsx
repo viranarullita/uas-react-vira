@@ -31,7 +31,6 @@ function MyRecipes() {
     setResepSaya(dataResep);
   }, [penggunaAktifId]);
 
-  // Reset form
   const resetForm = () => {
     setJudul("");
     setKategori("");
@@ -228,7 +227,7 @@ function MyRecipes() {
       )}
 
       {resepSaya.length === 0 ? (
-        <p className="text-center text-gray-600">Belum ada resep.</p>
+        <p className="text-center text-gray-600">Belum ada resep yang anda buat</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {resepSaya.map((resep) => (
