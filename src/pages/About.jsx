@@ -1,48 +1,43 @@
-import { Info, Star, Smile } from "lucide-react";
+import { Info, Smile } from "lucide-react";
 
 function About() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Tentang Aplikasi
-      </h1>
+      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in">
+        <header className="relative py-16 px-6 text-center text-white bg-orange-300 md:py-24">
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-wide drop-shadow-md animate-fade-in-down">
+              Tentang Website
+            </h1>
+          </div>
+        </header>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <section className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-orange-600 mb-3">
-            <Info size={20} /> Gambaran Umum
-          </h2>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            Aplikasi ini dirancang sebagai wadah untuk mengelola resep masakan
-            dengan cara yang lebih praktis. Pengguna dapat menambahkan resep
-            baru, menyimpan resep favorit, dan menjelajahi berbagai ide masakan
-            dari koleksi yang tersedia.
-          </p>
-        </section>
+        <main className="p-6 md:p-12">
+          <div className="grid gap-8 md:grid-cols-2">
+            <section className="bg-orange-50 rounded-xl p-6 shadow-md transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl animate-slide-in-left">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-orange-600 mb-3">
+                <Info size={24} className="text-orange-600 animate-pulse-slow" /> Gambaran Umum
+              </h2>
+              <p className="text-gray-700 text-base leading-relaxed">
+                Website ini dirancang untuk para pencinta
+                masakan. Dengan tampilan yang bersih dan mudah digunakan, website
+                ini memungkinkan Anda untuk mengelola koleksi resep pribadi,
+                menemukan inspirasi baru, dan berbagi kreasi kuliner.
+              </p>
+            </section>
 
-        <section className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-orange-600 mb-3">
-            <Star size={20} /> Fitur Utama
-          </h2>
-          <ul className="list-disc list-inside text-gray-600 text-sm space-y-1">
-            <li>Menyimpan resep pribadi agar mudah diakses kapan saja.</li>
-            <li>Menandai resep favorit untuk referensi cepat.</li>
-            <li>Mencari resep berdasarkan judul atau kategori.</li>
-            <li>Mengorganisir resep agar lebih rapi dan terstruktur.</li>
-          </ul>
-        </section>
-
-        <section className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
-          <h2 className="flex items-center gap-2 text-xl font-semibold text-orange-600 mb-3">
-            <Smile size={20} /> Manfaat
-          </h2>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            Dengan adanya aplikasi ini, pengguna tidak perlu lagi mencatat
-            resep di buku atau catatan terpisah. Semua resep tersimpan dengan
-            aman dalam satu tempat, sehingga memasak jadi lebih menyenangkan
-            dan efisien.
-          </p>
-        </section>
+            <section className="bg-orange-50 rounded-xl p-6 shadow-md transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl animate-slide-in-right">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-orange-600 mb-3">
+                <Smile size={24} className="text-lime-500 animate-bounce-slow" /> Manfaat
+              </h2>
+              <p className="text-gray-700 text-base leading-relaxed">
+                Anda tidak akan lagi kehilangan resep
+                favorit atau kesulitan mencari inspirasi. Masak kini jadi lebih
+                menyenangkan, efisien, dan penuh kreativitas.
+              </p>
+            </section>
+          </div>
+        </main>
       </div>
     </div>
   );

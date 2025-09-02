@@ -101,7 +101,7 @@ function AllRecipes() {
                 />
               </Link>
               <h3 className="text-lg font-semibold text-gray-800 truncate">{resep.title}</h3>
-              <p className="text-sm text-gray-500 mb-2 truncate">{resep.category}</p>
+              <p className="text-sm text-orange-600 mb-2 truncate">{resep.category}</p>
 
               <div className="text-xs text-gray-500 space-y-1 mb-4">
                 <div className="flex justify-between">
