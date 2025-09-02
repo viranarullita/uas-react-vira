@@ -1,9 +1,9 @@
 # CookRecipe
 
-CookRecipe adalah aplikasi berbasis web untuk mengelola dan berbagi resep masakan.  
+CookRecipe website untuk mengelola dan berbagi resep masakan.  
 Dibuat menggunakan **React + Vite** dengan styling **TailwindCSS**, serta mendukung fitur login/registrasi dengan penyimpanan data menggunakan `localStorage`.
 
-## Fitur Utama
+## Fitur 
 - Registrasi & Login pengguna
 - CRUD resep (Add, Read, Update, Delete)
 - Menyimpan resep favorit
