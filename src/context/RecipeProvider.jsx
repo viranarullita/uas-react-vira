@@ -7,12 +7,10 @@ function RecipeProvider({ children }) {
   const [favorites, setFavorites] = useState({});
   const [likes, setLikes] = useState({});
 
-  // Efek untuk memuat data dari localStorage saat komponen pertama kali dimuat
   useEffect(() => {
     const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || {};
     const savedLikes = JSON.parse(localStorage.getItem("likes")) || {};
     
-    // Mengambil semua resep yang dibuat oleh user dari localStorage
     const allUserRecipes = [];
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith("recipes_")) {
@@ -21,13 +19,12 @@ function RecipeProvider({ children }) {
       }
     });
 
-    // Menggabungkan resep bawaan dengan resep dari pengguna
     const combinedRecipes = [...defaultRecipes, ...allUserRecipes];
 
     setRecipes(combinedRecipes);
     setFavorites(savedFavorites);
     setLikes(savedLikes);
-  }, []); // Dependensi kosong agar hanya berjalan sekali
+  }, []); 
 
   // Fungsi untuk menyimpan resep yang dibuat oleh pengguna ke localStorage
   const simpanResepUser = (resep) => {
@@ -35,19 +32,16 @@ function RecipeProvider({ children }) {
     const key = `recipes_${userId}`;
     const userRecipes = JSON.parse(localStorage.getItem(key)) || [];
 
-    // Filter resep lama dan tambahkan resep baru/yang diupdate
     const updatedRecipes = userRecipes.filter(r => r.id !== resep.id);
     updatedRecipes.push(resep);
     localStorage.setItem(key, JSON.stringify(updatedRecipes));
 
-    // Update state global agar tampilan langsung berubah
     setRecipes(prev => {
       const otherRecipes = prev.filter(r => r.id !== resep.id);
       return [...otherRecipes, resep];
     });
   };
 
-  // Fungsi untuk toggle (menambah/menghapus) resep dari daftar favorit
   const toggleFavorite = (recipeId, userId) => {
     setFavorites((prev) => {
       const userFavorites = prev[userId] || [];
@@ -61,7 +55,6 @@ function RecipeProvider({ children }) {
     });
   };
 
-  // Fungsi untuk toggle (menambah/menghapus) resep dari daftar likes
   const toggleLike = (recipeId, userId) => {
     setLikes((prev) => {
       const userLikes = prev[userId] || [];

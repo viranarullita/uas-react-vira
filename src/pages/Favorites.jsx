@@ -7,22 +7,16 @@ function Favorites() {
   const { recipes, favorites } = useContext(RecipeContext);
   const currentUserId = localStorage.getItem("penggunaAktifId") || "guest";
 
-  // State untuk pagination
   const [halamanSaatIni, setHalamanSaatIni] = useState(1);
   const resepPerHalaman = 8;
 
-  // Filter resep hanya yang difavoritkan oleh pengguna aktif
   const favoritResep = recipes.filter((r) =>
     favorites[currentUserId]?.includes(r.id)
   );
 
-  // Logika pagination
   const totalHalaman = Math.ceil(favoritResep.length / resepPerHalaman);
   const indexAwal = (halamanSaatIni - 1) * resepPerHalaman;
-  const resepDitampilkan = favoritResep.slice(
-    indexAwal,
-    indexAwal + resepPerHalaman
-  );
+  const resepDitampilkan = favoritResep.slice(indexAwal, indexAwal + resepPerHalaman);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -36,7 +30,6 @@ function Favorites() {
         </p>
       ) : (
         <>
-          {/* Grid Resep Favorit */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {resepDitampilkan.map((resep) => (
               <Link
@@ -56,7 +49,6 @@ function Favorites() {
             ))}
           </div>
 
-          {/* Navigasi Pagination */}
           {totalHalaman > 1 && (
             <div className="flex justify-center items-center mt-6 space-x-4">
               <button
@@ -68,7 +60,7 @@ function Favorites() {
                     : "bg-orange-500 text-white hover:bg-orange-600"
                 }`}
               >
-                « Prev
+                Prev
               </button>
               <span className="text-gray-700 font-semibold">
                 Hal {halamanSaatIni} dari {totalHalaman}
@@ -82,7 +74,7 @@ function Favorites() {
                     : "bg-orange-500 text-white hover:bg-orange-600"
                 }`}
               >
-                Next »
+                Next
               </button>
             </div>
           )}

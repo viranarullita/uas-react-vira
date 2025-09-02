@@ -7,19 +7,14 @@ function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // State untuk menyimpan data resep yang dipilih dan status loading
   const [resepDipilih, setResepDipilih] = useState(null);
   const [sedangMemuat, setSedangMemuat] = useState(true);
 
   useEffect(() => {
-    // Mengubah ID dari string ke number
     const idParsed = Number(id);
 
-    // Mengambil daftar pengguna dari localStorage
-    const daftarPengguna =
-      JSON.parse(localStorage.getItem("daftarPengguna")) || [];
+    const daftarPengguna = JSON.parse(localStorage.getItem("daftarPengguna")) || [];
 
-    // Menggabungkan resep dari JSON bawaan dan resep buatan user
     let semuaResepUser = [];
     daftarPengguna.forEach((user) => {
       const resepUser =
@@ -28,15 +23,12 @@ function RecipeDetails() {
     });
     const semuaResep = [...resepData, ...semuaResepUser];
 
-    // Mencari resep berdasarkan ID yang cocok
-    const resepDitemukan =
-      semuaResep.find((resep) => resep.id === idParsed) || null;
+    const resepDitemukan = semuaResep.find((resep) => resep.id === idParsed) || null;
 
     setResepDipilih(resepDitemukan);
     setSedangMemuat(false);
   }, [id]);
 
-  // --- Tampilan saat Loading atau Resep Tidak Ditemukan ---
 
   if (sedangMemuat)
     return (
@@ -54,11 +46,10 @@ function RecipeDetails() {
       </div>
     );
 
-  // --- Tampilan Detail Resep ---
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      {/* Tombol Kembali */}
+
       <button
         onClick={() => navigate(-1)}
         className="mb-6 flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition"
@@ -66,7 +57,6 @@ function RecipeDetails() {
         <ArrowLeft size={18} /> Kembali
       </button>
 
-      {/* Gambar + Info Resep */}
       <div className="grid md:grid-cols-2 gap-8 mb-10 items-start">
         <img
           src={resepDipilih.image}
@@ -109,7 +99,6 @@ function RecipeDetails() {
         </div>
       </div>
 
-      {/* Bagian Bahan-bahan */}
       <div className="mb-10">
         <h3 className="flex items-center text-xl font-semibold text-orange-600 mb-3">
           <ShoppingBasket size={20} className="mr-2" /> Bahan-bahan
@@ -123,13 +112,11 @@ function RecipeDetails() {
               </li>
             ))
           ) : (
-            // Jika ingredients bukan array, tampilkan langsung
             <li>{resepDipilih.ingredients}</li>
           )}
         </ul>
       </div>
 
-      {/* Bagian Langkah-langkah */}
       <div>
         <h3 className="flex items-center text-xl font-semibold text-orange-600 mb-3">
           <ListOrdered size={20} className="mr-2" /> Cara Membuat
@@ -145,7 +132,6 @@ function RecipeDetails() {
               </li>
             ))
           ) : (
-            // Jika steps bukan array, tampilkan langsung
             <li>{resepDipilih.steps}</li>
           )}
         </ol>

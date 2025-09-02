@@ -8,7 +8,6 @@ function Login() {
   const [pesanError, setPesanError] = useState("");
   const navigate = useNavigate();
 
-  // Efek untuk mengarahkan pengguna ke halaman utama jika sudah login
   useEffect(() => {
     const penggunaAktif = localStorage.getItem("penggunaAktifId");
     if (penggunaAktif) {
@@ -19,12 +18,10 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Mengambil daftar pengguna dari localStorage
     const daftarPengguna = JSON.parse(
       localStorage.getItem("daftarPengguna") || "[]"
     );
 
-    // Mencari pengguna yang cocok dengan input
     const penggunaDitemukan = daftarPengguna.find(
       (p) => p.username === namaPengguna && p.password === kataSandi
     );
@@ -49,16 +46,13 @@ function Login() {
           Gunakan akun yang sudah terdaftar
         </p>
 
-        {/* Pesan Error */}
         {pesanError && (
           <div className="mb-4 bg-red-100 text-red-600 text-sm px-4 py-2 rounded-lg">
             {pesanError}
           </div>
         )}
 
-        {/* Form Login */}
         <form onSubmit={handleLogin} className="space-y-4">
-          {/* Input Username */}
           <div className="relative">
             <User
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -74,7 +68,6 @@ function Login() {
             />
           </div>
 
-          {/* Input Password */}
           <div className="relative">
             <Lock
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -90,7 +83,6 @@ function Login() {
             />
           </div>
 
-          {/* Tombol Login */}
           <button
             type="submit"
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition shadow-md"
@@ -99,7 +91,6 @@ function Login() {
           </button>
         </form>
 
-        {/* Link ke halaman Registrasi */}
         <p className="text-center mt-6 text-sm text-gray-600">
           Belum punya akun?{" "}
           <Link

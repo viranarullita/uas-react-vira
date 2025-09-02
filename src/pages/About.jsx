@@ -8,7 +8,6 @@ function About() {
       </h1>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Gambaran Umum */}
         <section className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
           <h2 className="flex items-center gap-2 text-xl font-semibold text-orange-600 mb-3">
             <Info size={20} /> Gambaran Umum
@@ -21,7 +20,6 @@ function About() {
           </p>
         </section>
 
-        {/* Fitur Utama */}
         <section className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
           <h2 className="flex items-center gap-2 text-xl font-semibold text-orange-600 mb-3">
             <Star size={20} /> Fitur Utama
@@ -34,7 +32,6 @@ function About() {
           </ul>
         </section>
 
-        {/* Manfaat */}
         <section className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
           <h2 className="flex items-center gap-2 text-xl font-semibold text-orange-600 mb-3">
             <Smile size={20} /> Manfaat

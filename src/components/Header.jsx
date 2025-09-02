@@ -3,17 +3,14 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Home, BookOpen, User, Bookmark, Info, Menu, X } from "lucide-react";
 
 const Header = () => {
-  // State untuk mengelola visibilitas menu di perangkat mobile
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Fungsi untuk menangani proses logout
   const handleLogout = () => {
     localStorage.removeItem("penggunaAktifId");
     navigate("/login");
   };
 
-  // Fungsi untuk menentukan kelas CSS berdasarkan status aktif NavLink
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-1 px-3 py-2 rounded-lg transition ${
       isActive
@@ -24,12 +21,11 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
-        {/* Logo */}
+
         <Link to="/" className="text-2xl font-bold text-orange-600">
           CookRecipe
         </Link>
 
-        {/* Tombol Hamburger (muncul di layar kecil) */}
         <button
           className="lg:hidden text-gray-700"
           onClick={() => setIsOpen(!isOpen)}
@@ -37,14 +33,12 @@ const Header = () => {
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Navigasi Utama */}
-        {/* Kelas dinamis untuk menyembunyikan/menampilkan menu di mobile */}
         <nav
           className={`${
             isOpen ? "block" : "hidden"
           } absolute lg:static top-full left-0 w-full lg:w-auto bg-white lg:bg-transparent lg:flex lg:items-center lg:gap-6 shadow-md lg:shadow-none`}
         >
-          {/* Kelompok Link Navigasi */}
+
           <div className="flex flex-col lg:flex-row lg:gap-4 p-4 lg:p-0">
             <NavLink
               to="/"
@@ -54,6 +48,7 @@ const Header = () => {
             >
               <Home size={18} /> Home
             </NavLink>
+
             <NavLink
               to="/all-recipes"
               className={navLinkClass}
@@ -61,6 +56,7 @@ const Header = () => {
             >
               <BookOpen size={18} /> All Recipes
             </NavLink>
+
             <NavLink
               to="/my-recipes"
               className={navLinkClass}
@@ -68,6 +64,7 @@ const Header = () => {
             >
               <User size={18} /> My Recipes
             </NavLink>
+
             <NavLink
               to="/favorites"
               className={navLinkClass}
@@ -75,6 +72,7 @@ const Header = () => {
             >
               <Bookmark size={18} /> Favorites
             </NavLink>
+            
             <NavLink
               to="/about"
               className={navLinkClass}
@@ -84,7 +82,6 @@ const Header = () => {
             </NavLink>
           </div>
 
-          {/* Tombol Logout */}
           <div className="p-4 lg:p-0 lg:ml-4">
             <button
               onClick={() => {
@@ -96,7 +93,9 @@ const Header = () => {
               Logout
             </button>
           </div>
+
         </nav>
+        
       </div>
     </header>
   );

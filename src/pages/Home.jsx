@@ -7,18 +7,15 @@ const Home = () => {
   const [daftarResep, setDaftarResep] = useState([]); 
   const [sedangMemuat, setSedangMemuat] = useState(true); 
 
-  // Referensi dan state untuk fitur scroll
   const refScroll = useRef(null); 
   const [bisaScrollKiri, setBisaScrollKiri] = useState(false); 
   const [bisaScrollKanan, setBisaScrollKanan] = useState(false); 
 
   useEffect(() => {
-    // Mengambil data resep dari file JSON saat komponen dimuat
     setDaftarResep(dataResep);
     setSedangMemuat(false);
   }, []);
 
-  // Fungsi untuk memeriksa posisi scroll dan mengaktifkan/menonaktifkan tombol navigasi
   const periksaScroll = () => {
     const elemen = refScroll.current;
     if (!elemen) return;
@@ -33,14 +30,12 @@ const Home = () => {
       elemen.addEventListener("scroll", periksaScroll);
       window.addEventListener("resize", periksaScroll);
     }
-    // Fungsi cleanup untuk menghapus event listener
     return () => {
       if (elemen) elemen.removeEventListener("scroll", periksaScroll);
       window.removeEventListener("resize", periksaScroll);
     };
   }, []);
 
-  // Fungsi untuk menggeser container scroll
   const geserScroll = (jumlah) => {
     refScroll.current.scrollBy({ left: jumlah, behavior: "smooth" });
   };
@@ -51,12 +46,10 @@ const Home = () => {
     );
   }
 
-  // Mengambil 3 resep terpopuler berdasarkan jumlah "suka"
   const resepPopuler = [...daftarResep]
     .sort((a, b) => b.likesCount - a.likesCount)
     .slice(0, 3);
 
-  // Mengambil 12 resep terbaru berdasarkan tanggal dibuat
   const resepTerbaru = [...daftarResep]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 12);
@@ -89,7 +82,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Bagian Resep Populer */}
       <section className="mt-12">
         <div className="flex items-center gap-2 mb-6">
           <Flame size={20} className="text-orange-600" />
@@ -147,14 +139,12 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Bagian Resep Terbaru */}
       <section className="mt-12 relative">
         <h2 className="flex items-center gap-2 text-lg md:text-xl font-semibold text-gray-800 mb-5">
           <Sparkles size={20} className="text-orange-600" />
           Resep Terbaru
         </h2>
 
-        {/* Tombol Geser Kiri */}
         {bisaScrollKiri && (
           <button
             onClick={() => geserScroll(-250)}
@@ -164,7 +154,6 @@ const Home = () => {
           </button>
         )}
 
-        {/* Container yang dapat di-scroll */}
         <div
           ref={refScroll}
           className="flex gap-5 overflow-x-auto pb-3 scroll-smooth"
@@ -205,7 +194,6 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Tombol Geser Kanan */}
         {bisaScrollKanan && (
           <button
             onClick={() => geserScroll(250)}

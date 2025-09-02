@@ -3,7 +3,6 @@ import { PlusCircle, Pencil, Trash2 } from "lucide-react";
 import { RecipeContext } from "../context/RecipeContext";
 
 function MyRecipes() {
-  // Ambil data pengguna aktif
   const penggunaAktifId = localStorage.getItem("penggunaAktifId");
   const daftarPengguna = JSON.parse(localStorage.getItem("daftarPengguna")) || [];
   const penggunaAktif = daftarPengguna.find(
@@ -12,14 +11,12 @@ function MyRecipes() {
 
   const { simpanResepUser } = useContext(RecipeContext);
 
-  // State daftar resep milik user
   const [resepSaya, setResepSaya] = useState([]);
-  // State untuk form popup
+
   const [tampilForm, setTampilForm] = useState(false);
-  // State untuk edit resep
+  
   const [editId, setEditId] = useState(null);
 
-  // State form input
   const [judul, setJudul] = useState("");
   const [kategori, setKategori] = useState("");
   const [waktu, setWaktu] = useState("");
@@ -28,7 +25,6 @@ function MyRecipes() {
   const [langkah, setLangkah] = useState("");
   const [gambar, setGambar] = useState("");
 
-  // Load resep user dari localStorage
   useEffect(() => {
     const dataResep =
       JSON.parse(localStorage.getItem(`recipes_${penggunaAktifId}`)) || [];
@@ -46,12 +42,10 @@ function MyRecipes() {
     setGambar("");
   };
 
-  // Simpan / update resep
   const handleSimpanResep = (e) => {
     e.preventDefault();
 
     if (editId) {
-      // Update resep
       const updated = resepSaya.map((r) =>
         r.id === editId
           ? {
@@ -71,13 +65,11 @@ function MyRecipes() {
       setResepSaya(updated);
       localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
 
-      // update context
       const resepUpdate = updated.find((r) => r.id === editId);
       simpanResepUser(resepUpdate);
 
       setEditId(null);
     } else {
-      // Tambah resep baru
       const resepBaru = {
         id: Date.now(),
         userId: penggunaAktifId,
@@ -95,7 +87,6 @@ function MyRecipes() {
       setResepSaya(updated);
       localStorage.setItem(`recipes_${penggunaAktifId}`, JSON.stringify(updated));
 
-      // simpan juga ke context
       simpanResepUser(resepBaru);
     }
 
@@ -103,7 +94,6 @@ function MyRecipes() {
     setTampilForm(false);
   };
 
-  // Hapus resep
   const handleHapus = (id) => {
     if (confirm("Yakin ingin menghapus resep ini?")) {
       const updated = resepSaya.filter((r) => r.id !== id);
@@ -112,7 +102,6 @@ function MyRecipes() {
     }
   };
 
-  // Edit resep
   const handleEdit = (resep) => {
     setEditId(resep.id);
     setJudul(resep.title);
@@ -127,7 +116,7 @@ function MyRecipes() {
 
   return (
     <div className="p-6">
-      {/* Header Halaman */}
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Resep Saya</h2>
         <button
@@ -140,7 +129,6 @@ function MyRecipes() {
         </button>
       </div>
 
-      {/* Pop-up Form */}
       {tampilForm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
           <div className="bg-white shadow-lg rounded-xl p-6 w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] max-w-lg max-h-[80vh] overflow-y-auto">
@@ -239,7 +227,6 @@ function MyRecipes() {
         </div>
       )}
 
-      {/* Daftar Resep Pengguna */}
       {resepSaya.length === 0 ? (
         <p className="text-center text-gray-600">Belum ada resep.</p>
       ) : (
@@ -280,6 +267,7 @@ function MyRecipes() {
           ))}
         </div>
       )}
+
     </div>
   );
 }
